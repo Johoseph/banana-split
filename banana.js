@@ -18,51 +18,62 @@ const screenConfig = [
   },
 ];
 
-const sp = 0.4; // swipe percentage - how far a user must swipe to get to next/prev screen
-let tp = null; // touch point
-let cs = 1; // current screen
+const swipePercentage = 0.4; // how far a user must swipe to get to next/prev screen
+let touchPoint = null;
+let currentScreen = 1;
 
-g.setColor(screenConfig[cs].colour);
+g.setColor(screenConfig[currentScreen].colour);
 g.fillRect(0, 0, vw, vh);
 
 const handleDrag = (e) => {
-  if (tp) {
-    const diff = tp - e.x;
-    if (diff < 0) {
-      // Swipe to previous
-      g.setColor(screenConfig[cs - 1].colour);
+  if (touchPoint) {
+    const diff = touchPoint - e.x;
+
+    // Backwards swipe
+    if (diff < 0 && screenConfig[currentScreen - 1]) {
+      g.setColor(screenConfig[currentScreen - 1].colour);
       g.fillRect(0, 0, -diff, vh);
 
-      g.setColor(screenConfig[cs].colour);
+      g.setColor(screenConfig[currentScreen].colour);
       g.fillRect(-diff, 0, vw, vh);
-    } else {
-      // Swipe to next
-      g.setColor(screenConfig[cs].colour);
+    }
+
+    // Forwards swipe
+    if (diff >= 0 && screenConfig[currentScreen + 1]) {
+      g.setColor(screenConfig[currentScreen].colour);
       g.fillRect(0, 0, vw - diff, vh);
 
-      g.setColor(screenConfig[cs + 1].colour);
+      g.setColor(screenConfig[currentScreen + 1].colour);
       g.fillRect(vw - diff, 0, vw, vh);
+      return;
     }
-  } else tp = e.x;
+  } else {
+    touchPoint = e.x;
+  }
 };
 
 const handleDrop = (e) => {
-  const diff = tp - e.x;
-  const newPage = Math.abs(diff / vw) >= 0.4;
+  const diff = touchPoint - e.x;
+  const newPage = Math.abs(diff / vw) >= swipePercentage;
+
   if (newPage) {
-    if (diff < 0) {
-      cs--;
-      g.setColor(screenConfig[cs].colour);
-    } else {
-      cs++;
-      g.setColor(screenConfig[cs].colour);
+    // Go to previous
+    if (diff < 0 && screenConfig[currentScreen - 1]) {
+      currentScreen--;
+      g.setColor(screenConfig[currentScreen].colour);
+    }
+
+    // Go to next
+    if (diff >= 0 && screenConfig[currentScreen + 1]) {
+      currentScreen++;
+      g.setColor(screenConfig[currentScreen].colour);
     }
   } else {
-    g.setColor(screenConfig[cs].colour);
+    g.setColor(screenConfig[currentScreen].colour);
   }
 
   g.fillRect(0, 0, vw, vh);
-  tp = null;
+  touchPoint = null;
 };
 
 Bangle.on("drag", (e) => {
