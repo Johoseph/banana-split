@@ -67,7 +67,7 @@ const handleDrop = (e) => {
           g.setColor(screenConfig[currentScreen].colour);
           g.fillRect(-diff, 0, vw, vh);
 
-          diff = diff - 2 > vw ? diff - 1 : diff - 2;
+          diff = -(diff - 2) > vw ? diff - 1 : diff - 2;
         } else {
           currentScreen--;
           clearInterval(interval);
