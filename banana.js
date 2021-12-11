@@ -93,8 +93,37 @@ const handleDrop = (e) => {
       }, [1]);
     }
   } else {
-    g.setColor(screenConfig[currentScreen].colour);
-    g.fillRect(0, 0, vw, vh);
+    if (diff < 0 && screenConfig[currentScreen - 1]) {
+      let interval = setInterval(() => {
+        if (-diff >= 0) {
+          g.setColor(screenConfig[currentScreen - 1].colour);
+          g.fillRect(0, 0, -diff, vh);
+
+          g.setColor(screenConfig[currentScreen].colour);
+          g.fillRect(-diff, 0, vw, vh);
+
+          diff = diff + 2 > 0 ? diff + 1 : diff + 2;
+        } else {
+          clearInterval(interval);
+        }
+      }, [1]);
+    }
+
+    if (diff >= 0 && screenConfig[currentScreen + 1]) {
+      let interval = setInterval(() => {
+        if (diff >= 0) {
+          g.setColor(screenConfig[currentScreen].colour);
+          g.fillRect(0, 0, vw - diff, vh);
+
+          g.setColor(screenConfig[currentScreen + 1].colour);
+          g.fillRect(vw - diff, 0, vw, vh);
+
+          diff = diff - 2 > 0 ? diff - 1 : diff - 2;
+        } else {
+          clearInterval(interval);
+        }
+      }, [1]);
+    }
   }
 
   touchPoint = null;
