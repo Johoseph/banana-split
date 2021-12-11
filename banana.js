@@ -25,28 +25,29 @@ let currentScreen = 1;
 g.setColor(screenConfig[currentScreen].colour);
 g.fillRect(0, 0, vw, vh);
 
+// @dir: "next" | "prev"
+const drawScreens = (dir, distance) => {
+  g.setColor(
+    screenConfig[dir === "prev" ? currentScreen - 1 : currentScreen].colour
+  );
+  g.fillRect(0, 0, distance, vh);
+
+  g.setColor(
+    screenConfig[dir === "prev" ? currentScreen : currentScreen + 1].colour
+  );
+  g.fillRect(distance, 0, vw, vh);
+};
+
 const handleDrag = (e) => {
   if (touchPoint) {
     const diff = touchPoint - e.x;
 
     // Backwards swipe
-    if (diff < 0 && screenConfig[currentScreen - 1]) {
-      g.setColor(screenConfig[currentScreen - 1].colour);
-      g.fillRect(0, 0, -diff, vh);
-
-      g.setColor(screenConfig[currentScreen].colour);
-      g.fillRect(-diff, 0, vw, vh);
-    }
+    if (diff < 0 && screenConfig[currentScreen - 1]) drawScreens("prev", -diff);
 
     // Forwards swipe
-    if (diff >= 0 && screenConfig[currentScreen + 1]) {
-      g.setColor(screenConfig[currentScreen].colour);
-      g.fillRect(0, 0, vw - diff, vh);
-
-      g.setColor(screenConfig[currentScreen + 1].colour);
-      g.fillRect(vw - diff, 0, vw, vh);
-      return;
-    }
+    if (diff >= 0 && screenConfig[currentScreen + 1])
+      drawScreens("next", vw - diff);
   } else {
     touchPoint = e.x;
   }
@@ -61,12 +62,7 @@ const handleDrop = (e) => {
     if (diff < 0 && screenConfig[currentScreen - 1]) {
       let interval = setInterval(() => {
         if (-diff <= vw) {
-          g.setColor(screenConfig[currentScreen - 1].colour);
-          g.fillRect(0, 0, -diff, vh);
-
-          g.setColor(screenConfig[currentScreen].colour);
-          g.fillRect(-diff, 0, vw, vh);
-
+          drawScreens("prev", -diff);
           diff = -(diff - 2) > vw ? diff - 1 : diff - 2;
         } else {
           currentScreen--;
@@ -79,12 +75,7 @@ const handleDrop = (e) => {
     if (diff >= 0 && screenConfig[currentScreen + 1]) {
       let interval = setInterval(() => {
         if (diff <= vw) {
-          g.setColor(screenConfig[currentScreen].colour);
-          g.fillRect(0, 0, vw - diff, vh);
-
-          g.setColor(screenConfig[currentScreen + 1].colour);
-          g.fillRect(vw - diff, 0, vw, vh);
-
+          drawScreens("next", vw - diff);
           diff = diff + 2 > vw ? diff + 1 : diff + 2;
         } else {
           currentScreen++;
@@ -96,12 +87,7 @@ const handleDrop = (e) => {
     if (diff < 0 && screenConfig[currentScreen - 1]) {
       let interval = setInterval(() => {
         if (-diff >= 0) {
-          g.setColor(screenConfig[currentScreen - 1].colour);
-          g.fillRect(0, 0, -diff, vh);
-
-          g.setColor(screenConfig[currentScreen].colour);
-          g.fillRect(-diff, 0, vw, vh);
-
+          drawScreens("prev", -diff);
           diff = diff + 2 > 0 ? diff + 1 : diff + 2;
         } else {
           clearInterval(interval);
@@ -112,12 +98,7 @@ const handleDrop = (e) => {
     if (diff >= 0 && screenConfig[currentScreen + 1]) {
       let interval = setInterval(() => {
         if (diff >= 0) {
-          g.setColor(screenConfig[currentScreen].colour);
-          g.fillRect(0, 0, vw - diff, vh);
-
-          g.setColor(screenConfig[currentScreen + 1].colour);
-          g.fillRect(vw - diff, 0, vw, vh);
-
+          drawScreens("next", vw - diff);
           diff = diff - 2 > 0 ? diff - 1 : diff - 2;
         } else {
           clearInterval(interval);
