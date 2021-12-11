@@ -1,0 +1,11 @@
+{
+  "name": "banana-split",
+  "version": "0.1.0",
+  "description": "Banana Counter app for the Bangle.js 2 🍌",
+  "main": "banana.js",
+  "author": "Joseph Moroney",
+  "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.4.1"
+  }
+}
