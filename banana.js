@@ -18,7 +18,7 @@ const screenConfig = [
   },
 ];
 
-const swipePercentage = 0.4; // how far a user must swipe to get to next/prev screen
+const swipePercentage = 0.3; // how far a user must swipe to get to next/prev screen
 let touchPoint = null;
 let currentScreen = 1;
 
@@ -53,26 +53,50 @@ const handleDrag = (e) => {
 };
 
 const handleDrop = (e) => {
-  const diff = touchPoint - e.x;
+  let diff = touchPoint - e.x;
   const newPage = Math.abs(diff / vw) >= swipePercentage;
 
   if (newPage) {
     // Go to previous
     if (diff < 0 && screenConfig[currentScreen - 1]) {
-      currentScreen--;
-      g.setColor(screenConfig[currentScreen].colour);
+      let interval = setInterval(() => {
+        if (-diff <= vw) {
+          g.setColor(screenConfig[currentScreen - 1].colour);
+          g.fillRect(0, 0, -diff, vh);
+
+          g.setColor(screenConfig[currentScreen].colour);
+          g.fillRect(-diff, 0, vw, vh);
+
+          diff = diff - 2 > vw ? diff - 1 : diff - 2;
+        } else {
+          currentScreen--;
+          clearInterval(interval);
+        }
+      }, [1]);
     }
 
     // Go to next
     if (diff >= 0 && screenConfig[currentScreen + 1]) {
-      currentScreen++;
-      g.setColor(screenConfig[currentScreen].colour);
+      let interval = setInterval(() => {
+        if (diff <= vw) {
+          g.setColor(screenConfig[currentScreen].colour);
+          g.fillRect(0, 0, vw - diff, vh);
+
+          g.setColor(screenConfig[currentScreen + 1].colour);
+          g.fillRect(vw - diff, 0, vw, vh);
+
+          diff = diff + 2 > vw ? diff + 1 : diff + 2;
+        } else {
+          currentScreen++;
+          clearInterval(interval);
+        }
+      }, [1]);
     }
   } else {
     g.setColor(screenConfig[currentScreen].colour);
+    g.fillRect(0, 0, vw, vh);
   }
 
-  g.fillRect(0, 0, vw, vh);
   touchPoint = null;
 };
 
