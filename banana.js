@@ -11,21 +11,21 @@ const screenConfig = [
     layout: [
       {
         text: "TOTAL",
-        font: "6x8:3x3",
+        font: "Vector:20",
         x: vw / 2,
         y: 30,
       },
       {
         text: data.length,
-        font: "6x8:9x9",
+        font: "Vector:76",
         x: vw / 2,
         y: vh / 2,
       },
       {
         text: "eaten",
-        font: "6x8:3x3",
+        font: "Vector:32",
         x: 110,
-        y: 150,
+        y: 146,
       },
     ],
   },
