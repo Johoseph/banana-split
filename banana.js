@@ -31,7 +31,7 @@ const screenConfig = [
       {
         type: "text",
         content: data.length,
-        font: "Vector:76",
+        font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
         x: vw / 2,
         y: vh / 2,
       },
