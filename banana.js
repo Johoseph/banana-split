@@ -5,24 +5,45 @@ const vh = g.getHeight();
 
 let data = require("Storage").readJSON("banana-count") || [];
 
+const banana = {
+  width: 31,
+  height: 32,
+  bpp: 16,
+  transparent: 1,
+  buffer: require("heatshrink").decompress(
+    atob(
+      "gEBAIe1y2EiABBAoINFANfOvMhghKHmOGHdve/cQwQ1BoOjvdHAIMg4I/vrXrGINSgn+14BD91OmNCBoOc+Y9pPIfl9o9FAIO0xQNBnPnPtQACHY4BDfwg94oOjB4Otuo93yfIB4Na9Y9391OXZOlimEiFChABBscMBII9lAINiwoRBvfvG4MQwRHEAA0hgm9+49RjHjDIP2pw9L7vNGI9BsGLoG8AIWbwAJBB4Y/RnPnCoPFhZ9RiFgGoP94ABJwXgP4Y9PtdtCoOT5A9NPoMY4HM0A7LAIcxPoWtuo9NxlxCYJrBHpoBB3ljHZ59FvfvHpve/YTBkHBHp/9PIn1sAxBeIIBDuWAHqoBBjHjfKGNNotR4CsCAAg/BHq75DXZ1rHYftsEQsA9JQ4Mg0AHBznzHp67DiFh+1OHp4BB5mgH44HFlNlHZ4BDrXrDINy8w9RH4ZxDAAolCHaQBBscMDofNg3+gn98Q3HAI6/BWoIdDEYKjCHaT3DTIJlBG54BJxdAXIpBReoYAB6g7aAIfdW4MgX4sxw2UyRDJPIdywAjF+tg0eA6lgAJIPBIJtqwCDFAANChBDBHoZLBPJNR4ALB1Y/M9sA/qVO1fgQoJDFiGC515A4YZHBYcIoGC4A/L7mA9tAZKPM0ExYog9PAAdqkA/LIIWgIISDO9tgYo49PAAMoUILBMIY0A+tgAIPc4OK0oDBFoNy0AnBlNlAYOz8A9PAAdR0G7YZgBH4fhyXF3fBA4NZ8AjBznzX4RTCP45JBKId798IsJBDoNgycAIKYBB4kAhFAEAUBPocg0Gj0HlYIXU0BJBAAOMuIVB737rXrQo5DBtUgIoOboDNJBoLbBC4M584nBH4oAJBoQTCAIqZBDZonVEoNKtInDJoKzBHZIBH3v3CoIZBAIbPFAoIJBT4YBBA"
+    )
+  ),
+};
+
 const screenConfig = [
   {
     colour: "#CAFFBF",
     layout: [
       {
-        text: "TOTAL",
+        type: "text",
+        content: "TOTAL",
         font: "Vector:20",
         x: vw / 2,
         y: 30,
       },
       {
-        text: data.length,
+        type: "text",
+        content: data.length,
         font: "Vector:76",
         x: vw / 2,
         y: vh / 2,
       },
       {
-        text: "eaten",
+        type: "image",
+        content: banana,
+        x: 24,
+        y: 128,
+      },
+      {
+        type: "text",
+        content: "eaten",
         font: "Vector:32",
         x: 110,
         y: 146,
@@ -33,8 +54,9 @@ const screenConfig = [
     colour: "#9BF6FF",
     layout: [
       {
-        text: "GUNK",
-        font: "6x8:7x7",
+        type: "text",
+        content: ">.<",
+        font: "Vector:76",
         x: vw / 2,
         y: vh / 2,
       },
@@ -57,6 +79,19 @@ const hexToRgb = (hex) => {
     .map((rgb) => parseInt(rgb, 16));
 };
 
+const drawContent = (content, distance) => {
+  switch (content.type) {
+    case "image":
+      g.drawImage(content.content, content.x + distance, content.y);
+      break;
+    case "text":
+    default:
+      g.setFont(content.font);
+      g.drawString(content.content, content.x + distance, content.y);
+      break;
+  }
+};
+
 const swipePercentage = 0.3; // how far a user must swipe to get to next/prev screen
 let touchPoint = null;
 let currentScreen = 0;
@@ -68,10 +103,9 @@ g.fillRect(0, 0, vw, vh);
 g.setColor("#333333");
 g.setFontAlign(0, 0);
 
-screenConfig[currentScreen].layout.forEach((item) => {
-  g.setFont(item.font);
-  g.drawString(item.text, item.x, item.y);
-});
+screenConfig[currentScreen].layout.forEach(
+  (content) => drawContent(content, 0) // No defaults for functions
+);
 
 // @dir: "next" | "prev"
 const drawScreens = (dir, distance) => {
@@ -90,17 +124,11 @@ const drawScreens = (dir, distance) => {
   g.setColor("#333333");
   screenConfig[
     dir === "prev" ? currentScreen - 1 : currentScreen
-  ].layout.forEach((item) => {
-    g.setFont(item.font);
-    g.drawString(item.text, item.x + distance - vw, item.y);
-  });
+  ].layout.forEach((content) => drawContent(content, distance - vw));
 
   screenConfig[
     dir === "prev" ? currentScreen : currentScreen + 1
-  ].layout.forEach((item) => {
-    g.setFont(item.font);
-    g.drawString(item.text, item.x + distance, item.y);
-  });
+  ].layout.forEach((content) => drawContent(content, distance));
 };
 
 const handleDrag = (e) => {
