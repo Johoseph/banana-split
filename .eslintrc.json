@@ -11,6 +11,7 @@
   "rules": {},
   "globals": {
     "g": true,
-    "Bangle": true
+    "Bangle": true,
+    "require": true
   }
 }
