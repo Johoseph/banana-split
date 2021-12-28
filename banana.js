@@ -1,7 +1,7 @@
 const vw = g.getWidth();
 const vh = g.getHeight();
 
-let data, fitCount, screenConfig;
+let data, screenConfig, viewsData;
 
 const banana = {
   width: 31,
@@ -97,11 +97,59 @@ const swipePercentage = 0.3; // how far a user must swipe to get to next/prev sc
 let touchPoint = null;
 let currentScreen = 0;
 
+const views = ["total", "daily", "monthly", "yearly"];
+let currentView = 0;
+
 const init = () => {
   g.clear();
 
   data = require("Storage").readJSON("banana-split-storage") || [];
-  fitCount = data.filter((rec) => rec[Object.keys(rec)[0]] === 1).length;
+
+  viewsData = {
+    eaten: {},
+    fit: {},
+    split: {},
+  };
+
+  // Set 'eaten' view data
+  viewsData.eaten.total = data.length;
+  viewsData.eaten.yearly = data.filter(
+    (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
+  ).length;
+  viewsData.eaten.monthly = data.filter(
+    (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
+  ).length;
+  viewsData.eaten.daily = data.filter(
+    (entry) => entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+  ).length;
+
+  // Set 'fit' view data
+  const fitData = data.filter((entry) => entry.fit === 1);
+
+  viewsData.fit.total = fitData.length;
+  viewsData.fit.yearly = fitData.filter(
+    (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
+  ).length;
+  viewsData.fit.monthly = fitData.filter(
+    (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
+  ).length;
+  viewsData.fit.daily = fitData.filter(
+    (entry) => entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+  ).length;
+
+  // Set 'split' view data
+  const splitData = data.filter((entry) => entry.fit === 0);
+
+  viewsData.split.total = splitData.length;
+  viewsData.split.yearly = splitData.filter(
+    (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
+  ).length;
+  viewsData.split.monthly = splitData.filter(
+    (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
+  ).length;
+  viewsData.split.daily = splitData.filter(
+    (entry) => entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+  ).length;
 
   screenConfig = [
     {
@@ -122,14 +170,14 @@ const init = () => {
         },
         {
           type: "text",
-          content: data.length,
+          content: viewsData.eaten[views[currentView]],
           font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
           x: vw / 2,
           y: vh / 2 + 8,
         },
         {
           type: "text",
-          content: "TOTAL",
+          content: views[currentView].toUpperCase(),
           font: "Vector:20",
           x: vw / 2,
           y: 148,
@@ -154,14 +202,14 @@ const init = () => {
         },
         {
           type: "text",
-          content: fitCount,
+          content: viewsData.fit[views[currentView]],
           font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
           x: vw / 2,
           y: vh / 2 + 8,
         },
         {
           type: "text",
-          content: "TOTAL",
+          content: views[currentView].toUpperCase(),
           font: "Vector:20",
           x: vw / 2,
           y: 148,
@@ -186,14 +234,14 @@ const init = () => {
         },
         {
           type: "text",
-          content: data.length - fitCount,
+          content: viewsData.split[views[currentView]],
           font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
           x: vw / 2,
           y: vh / 2 + 8,
         },
         {
           type: "text",
-          content: "TOTAL",
+          content: views[currentView].toUpperCase(),
           font: "Vector:20",
           x: vw / 2,
           y: 148,
@@ -318,11 +366,12 @@ const handleDrop = (e) => {
 
 // @doesFit: 0 | 1;
 const addBanana = (doesFit) => {
-  const obj = {};
+  const entry = {
+    dt: new Date().toISOString(),
+    fit: doesFit,
+  };
 
-  obj[new Date().toISOString()] = doesFit;
-
-  data.unshift(obj);
+  data.unshift(entry);
 
   require("Storage").writeJSON("banana-split-storage", data);
   init();
@@ -333,9 +382,15 @@ Bangle.on("drag", (e) => {
   else handleDrag(e);
 });
 
+Bangle.on("touch", () => {
+  if (currentView === views.length - 1) currentView = 0;
+  else currentView++;
+  // TODO: Call init hear or better custom implementation
+});
+
 Bangle.on("tap", (tap) => {
   if (tap.dir === "right") {
-    addBanana(tap.double ? 0 : 1);
+    addBanana(tap.double ? 1 : 0);
     Bangle.buzz(200, 1);
     if (tap.double) setTimeout(() => Bangle.buzz(200, 1), 400);
   }
