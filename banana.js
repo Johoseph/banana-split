@@ -3,7 +3,7 @@ g.clear();
 const vw = g.getWidth();
 const vh = g.getHeight();
 
-let data = require("Storage").readJSON("banana-count") || [];
+let data = require("Storage").readJSON("banana-split-storage") || [];
 
 let fitCount = data.filter((rec) => rec[Object.keys(rec)[0]] === 1).length;
 
@@ -15,7 +15,7 @@ const addMockStorage = () => {
 
   data.unshift(obj);
 
-  require("Storage").writeJSON("banana-count", data);
+  require("Storage").writeJSON("banana-split-storage", data);
   console.log(data);
 };
 
@@ -34,9 +34,15 @@ const banana = {
 };
 
 const partyFace = {
-  width : 27, height : 27, bpp : 16,
-  transparent : 1,
-  buffer : require("heatshrink").decompress(atob("gEBAJ+tutzx1ChABBGru9+4KHlNlwkQiGCBYtBwM5AIUZkkA4oBBkNnAIIHDhMnBIcIsI1HjFgnHAFosg4F7kfNg3+o4BFnfygcWkd1wv9AIMb24JBhd2BIchw41HvOA+cBrMgiFgxeEF44BFpkRFYMTFYlM3QJBAINU7Q1HAIJzBNYPq8I3B9kjGZoBBxnOFYdtvgrBvvdhdWBYcTy6nBGotrtoGBqOB+fj/fjFo/Wk1ekemooHB7vJFIcj65tDHYI3FcIQ1EkMETYPdsxhJGYMWkIBBGoYBBrlQTI5vDU4LfBGot794EBybPMM4IzBHIILFNoMLqo3JAIbXFiGCkHAZpuekhnFAIu9tY1DAIMsjDfDGouc+ZpL3mluXDwcjVpYLBB4NS48Lmo5Fid2keVhMnGINa9YDB8olGzfkhFgpPilMhcoPNgwRFA4ILBnOBCYMAsU7t43FAILXDnPnT5IzBFot7kdaoQRFF4OLQ4gXBDYLhBxnOnfyAIMZozXCgFBwI1HtWjA4vt44JHA44BBI44BBF4I1L1tt0tOZ5IBZGpPuhE0m8D7QBBA4I1jjHjAILXDxswGINc2fN5YZH8sj7nBAIf+k41RiFgnPnpVpNoP189s6Q1BC5PtwnlgRpX8tmF4Nrtuc+YFB0fkNYdk2fF1gBF2sq1mo3uLPJIBLyeEF4OtusAgLZDZ4Msa4gBN3usGqLPBhFhGYUBrXrG4PE0oPBztOvsRAIt86Fsl18+B/BJYIzPSoKfDGofe/Y9BIILbBa5Vk9tDTqYjBiFgNIoBDxlxIIMxkIfKk/c0Pc4IBDBIIRF/sm9Pl9kmEYLTGAIylDCYJvLAJo1B9HE9GEsA1CznzGpI3FU4LfDAKYXBjFg5Fj7GEEYM5841LU4azCgFBwLxBOZYLBB4ITBC4IABnEhuFChA1QAIPe/ZxDAAatBFIIBDZIYADFYQAGGqI5FOYNKtMY8YjFA4ILBB4ITBC4O9+4BF515EoYA="))
+  width: 27,
+  height: 27,
+  bpp: 16,
+  transparent: 1,
+  buffer: require("heatshrink").decompress(
+    atob(
+      "gEBAJ+tutzx1ChABBGru9+4KHlNlwkQiGCBYtBwM5AIUZkkA4oBBkNnAIIHDhMnBIcIsI1HjFgnHAFosg4F7kfNg3+o4BFnfygcWkd1wv9AIMb24JBhd2BIchw41HvOA+cBrMgiFgxeEF44BFpkRFYMTFYlM3QJBAINU7Q1HAIJzBNYPq8I3B9kjGZoBBxnOFYdtvgrBvvdhdWBYcTy6nBGotrtoGBqOB+fj/fjFo/Wk1ekemooHB7vJFIcj65tDHYI3FcIQ1EkMETYPdsxhJGYMWkIBBGoYBBrlQTI5vDU4LfBGot794EBybPMM4IzBHIILFNoMLqo3JAIbXFiGCkHAZpuekhnFAIu9tY1DAIMsjDfDGouc+ZpL3mluXDwcjVpYLBB4NS48Lmo5Fid2keVhMnGINa9YDB8olGzfkhFgpPilMhcoPNgwRFA4ILBnOBCYMAsU7t43FAILXDnPnT5IzBFot7kdaoQRFF4OLQ4gXBDYLhBxnOnfyAIMZozXCgFBwI1HtWjA4vt44JHA44BBI44BBF4I1L1tt0tOZ5IBZGpPuhE0m8D7QBBA4I1jjHjAILXDxswGINc2fN5YZH8sj7nBAIf+k41RiFgnPnpVpNoP189s6Q1BC5PtwnlgRpX8tmF4Nrtuc+YFB0fkNYdk2fF1gBF2sq1mo3uLPJIBLyeEF4OtusAgLZDZ4Msa4gBN3usGqLPBhFhGYUBrXrG4PE0oPBztOvsRAIt86Fsl18+B/BJYIzPSoKfDGofe/Y9BIILbBa5Vk9tDTqYjBiFgNIoBDxlxIIMxkIfKk/c0Pc4IBDBIIRF/sm9Pl9kmEYLTGAIylDCYJvLAJo1B9HE9GEsA1CznzGpI3FU4LfDAKYXBjFg5Fj7GEEYM5841LU4azCgFBwLxBOZYLBB4ITBC4IABnEhuFChA1QAIPe/ZxDAAatBFIIBDZIYADFYQAGGqI5FOYNKtMY8YjFA4ILBB4ITBC4O9+4BF515EoYA="
+    )
+  ),
 };
 
 const screenConfig = [

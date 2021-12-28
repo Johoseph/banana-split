@@ -8,10 +8,14 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "rules": {},
+  "rules": {
+    "no-unused-vars": "warn"
+  },
   "globals": {
     "g": true,
     "Bangle": true,
-    "require": true
+    "require": true,
+    "setWatch": true,
+    "BTN1": true
   }
 }
