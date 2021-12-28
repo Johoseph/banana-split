@@ -1,25 +1,7 @@
-g.clear();
-
 const vw = g.getWidth();
 const vh = g.getHeight();
 
-let data = require("Storage").readJSON("banana-split-storage") || [];
-
-let fitCount = data.filter((rec) => rec[Object.keys(rec)[0]] === 1).length;
-
-// TODO: Delete once testing is complete
-const addMockStorage = () => {
-  const obj = {};
-
-  obj[new Date().toISOString()] = Math.random() > 0.5 ? 1 : 0;
-
-  data.unshift(obj);
-
-  require("Storage").writeJSON("banana-split-storage", data);
-  console.log(data);
-};
-
-setWatch(addMockStorage, BTN1, true);
+let data, fitCount, screenConfig;
 
 const banana = {
   width: 31,
@@ -34,327 +16,28 @@ const banana = {
 };
 
 const partyFace = {
-  width: 27,
-  height: 27,
+  width: 31,
+  height: 32,
   bpp: 16,
   transparent: 1,
   buffer: require("heatshrink").decompress(
     atob(
-      "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"
+      "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"
     )
   ),
 };
 
 const fearFace = {
-  width: 26,
-  height: 27,
+  width: 31,
+  height: 32,
   bpp: 16,
   transparent: 1,
   buffer: require("heatshrink").decompress(
     atob(
-      "gEBAJve/eUyVSxVChEhggBBAoNjhgNBCIIjPAJe9+4lBJAsQ4chs4BBhFhBooVBDIIxVueOD4cp9Ncil9zeF/oBFBINT2Up5IXDDoQxQmOGC4Mhw91nItHAJYVBDIIdBEIQxQpdQF6YBHoXuGpspsoPBQYIXBtt8nlZkfXAINlnYpHrsbB4YVBuucBYJTBbIYxFvfvBYM6xt97ssjEDiwBDjeXGZYNBCoo3BEIMylYpBxlxGYcQwUQ4d1vcb24XBkfYFpIBLHIohBEoIpBFoJlFS4KVBJIbPbmk4EIIlBFIJpDjHjhFhCouOju+73G/2+7uum/GiQBJ11ZCYPPjwZBDoIlFFoMxww3BUoILDz1d+/f/4AF73+xn+o4BGxgNBCgodBEIInDaYYABrfSBION/gbD62awkQAYIgC7gzHCofGjAVF+/eEoIpBrexGYd9i2ui3+1wTCzzfCgADBA4ILB/2tGYmtBIPnjgjDCoJrD/2N00Yvs2B4e09QdF737BoYABEoIzL515CopJH2sLBofE0odCpKFDvfvnPnxlxaIlJGYgVBAAQVDznzCogTCFoIzD0fkXIkSdYoAEiTPImYUJ/3wCIeTwgzDuXDEI3P/+7DQW7A4IxHAInwCptioQxBjHjkHAEZgBG3ml5sGC6cQsAxBtdtaIwBKzfkDIKBDAoOsooZNY4IVBb4Pe/YFBoOBGJovDAA41NSYMIsMAgIBBNIbZBC5MIMYgAHXJeDkZlDGYYBBUIILB2hPGY4IxLAAfdsyXJlNlGIoBB515OIUACYLzTZJYlBZIQzGGo9y4f184vTCoNR8QdBRoIlBGJIBDIIM584XBiFgG4PVgwvLBoIRBCoIZBDoQvMAI+c+bZDHIdBwIBFFoZhDDIIxVAIututrtpxDAAoJBBoKRPAII"
+      "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"
     )
   ),
 };
-
-const screenConfig = [
-  {
-    colour: "#FDFFB6",
-    layout: [
-      {
-        type: "text",
-        content: "TOTAL",
-        font: "Vector:20",
-        x: vw / 2,
-        y: 30,
-      },
-      {
-        type: "text",
-        content: data.length,
-        font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
-        x: vw / 2,
-        y: vh / 2,
-      },
-      {
-        type: "image",
-        content: banana,
-        x: 24,
-        y: 128,
-      },
-      {
-        type: "text",
-        content: "eaten",
-        font: "Vector:32",
-        x: 110,
-        y: 146,
-      },
-    ],
-  },
-  {
-    colour: "#CAFFBF",
-    layout: [
-      {
-        type: "text",
-        content: "TOTAL",
-        font: "Vector:16",
-        x: vw / 2,
-        y: 20,
-      },
-      {
-        type: "text",
-        content: fitCount,
-        font: "Vector:58",
-        x: vw / 2,
-        y: 65,
-      },
-      {
-        type: "text",
-        content: "fit",
-        font: "Vector:24",
-        x: 68,
-        y: 113,
-      },
-      {
-        type: "image",
-        content: partyFace,
-        x: 90,
-        y: 98,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "rect",
-        fill: "#FFFFFF",
-        x: [25, 67],
-        y: [135, 165],
-      },
-      {
-        type: "line",
-        x: [25, 67],
-        y: [135, 135],
-      },
-      {
-        type: "line",
-        x: [25, 67],
-        y: [165, 165],
-      },
-      {
-        type: "text",
-        content: "sub",
-        font: "Vector:22",
-        x: 47,
-        y: 150,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: vw - 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: vw - 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: vw - 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: vw - 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "rect",
-        fill: "#FFFFFF",
-        x: [vw - 25, vw - 67],
-        y: [135, 165],
-      },
-      {
-        type: "line",
-        x: [vw - 25, vw - 67],
-        y: [135, 135],
-      },
-      {
-        type: "line",
-        x: [vw - 25, vw - 67],
-        y: [165, 165],
-      },
-      {
-        type: "text",
-        content: "add",
-        font: "Vector:22",
-        x: vw - 47,
-        y: 150,
-      },
-    ],
-  },
-  {
-    colour: "#FFADAD",
-    layout: [
-      {
-        type: "text",
-        content: "TOTAL",
-        font: "Vector:16",
-        x: vw / 2,
-        y: 20,
-      },
-      {
-        type: "text",
-        content: data.length - fitCount,
-        font: "Vector:58",
-        x: vw / 2,
-        y: 65,
-      },
-      {
-        type: "text",
-        content: "split",
-        font: "Vector:24",
-        x: 65,
-        y: 113,
-      },
-      {
-        type: "image",
-        content: fearFace,
-        x: 96,
-        y: 98,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "rect",
-        fill: "#FFFFFF",
-        x: [25, 67],
-        y: [135, 165],
-      },
-      {
-        type: "line",
-        x: [25, 67],
-        y: [135, 135],
-      },
-      {
-        type: "line",
-        x: [25, 67],
-        y: [165, 165],
-      },
-      {
-        type: "text",
-        content: "sub",
-        font: "Vector:22",
-        x: 47,
-        y: 150,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: vw - 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        fill: "#FFFFFF",
-        x: vw - 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: vw - 25,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "circle",
-        x: vw - 67,
-        y: 150,
-        rad: 15,
-      },
-      {
-        type: "rect",
-        fill: "#FFFFFF",
-        x: [vw - 25, vw - 67],
-        y: [135, 165],
-      },
-      {
-        type: "line",
-        x: [vw - 25, vw - 67],
-        y: [135, 135],
-      },
-      {
-        type: "line",
-        x: [vw - 25, vw - 67],
-        y: [165, 165],
-      },
-      {
-        type: "text",
-        content: "add",
-        font: "Vector:22",
-        x: vw - 47,
-        y: 150,
-      },
-    ],
-  },
-  {
-    colour: "#FDFFB6",
-    layout: [],
-  },
-];
 
 const hexToRgb = (hex) => {
   return hex
@@ -414,16 +97,128 @@ const swipePercentage = 0.3; // how far a user must swipe to get to next/prev sc
 let touchPoint = null;
 let currentScreen = 0;
 
-g.setColor(screenConfig[currentScreen].colour);
-g.fillRect(0, 0, vw, vh);
+const init = () => {
+  g.clear();
 
-// Render screen content
-g.setColor("#333333");
-g.setFontAlign(0, 0);
+  data = require("Storage").readJSON("banana-split-storage") || [];
+  fitCount = data.filter((rec) => rec[Object.keys(rec)[0]] === 1).length;
 
-screenConfig[currentScreen].layout.forEach(
-  (content) => drawContent(content, 0) // No defaults for functions
-);
+  screenConfig = [
+    {
+      colour: "#FDFFB6",
+      layout: [
+        {
+          type: "image",
+          content: banana,
+          x: 24,
+          y: 16,
+        },
+        {
+          type: "text",
+          content: "eaten",
+          font: "Vector:32",
+          x: 110,
+          y: 34,
+        },
+        {
+          type: "text",
+          content: data.length,
+          font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
+          x: vw / 2,
+          y: vh / 2 + 8,
+        },
+        {
+          type: "text",
+          content: "TOTAL",
+          font: "Vector:20",
+          x: vw / 2,
+          y: 148,
+        },
+      ],
+    },
+    {
+      colour: "#CAFFBF",
+      layout: [
+        {
+          type: "text",
+          content: "fit",
+          font: "Vector:32",
+          x: 65,
+          y: 34,
+        },
+        {
+          type: "image",
+          content: partyFace,
+          x: 93,
+          y: 16,
+        },
+        {
+          type: "text",
+          content: fitCount,
+          font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
+          x: vw / 2,
+          y: vh / 2 + 8,
+        },
+        {
+          type: "text",
+          content: "TOTAL",
+          font: "Vector:20",
+          x: vw / 2,
+          y: 148,
+        },
+      ],
+    },
+    {
+      colour: "#FFADAD",
+      layout: [
+        {
+          type: "text",
+          content: "split",
+          font: "Vector:32",
+          x: 67,
+          y: 34,
+        },
+        {
+          type: "image",
+          content: fearFace,
+          x: 109,
+          y: 16,
+        },
+        {
+          type: "text",
+          content: data.length - fitCount,
+          font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
+          x: vw / 2,
+          y: vh / 2 + 8,
+        },
+        {
+          type: "text",
+          content: "TOTAL",
+          font: "Vector:20",
+          x: vw / 2,
+          y: 148,
+        },
+      ],
+    },
+    {
+      colour: "#FDFFB6",
+      layout: [],
+    },
+  ];
+
+  g.setColor(screenConfig[currentScreen].colour);
+  g.fillRect(0, 0, vw, vh);
+
+  // Render screen content
+  g.setColor("#333333");
+  g.setFontAlign(0, 0);
+
+  screenConfig[currentScreen].layout.forEach(
+    (content) => drawContent(content, 0) // No defaults for functions
+  );
+};
+
+init();
 
 // @dir: "next" | "prev"
 const drawScreens = (dir, distance) => {
@@ -521,7 +316,34 @@ const handleDrop = (e) => {
   touchPoint = null;
 };
 
+// @doesFit: 0 | 1;
+const addBanana = (doesFit) => {
+  const obj = {};
+
+  obj[new Date().toISOString()] = doesFit;
+
+  data.unshift(obj);
+
+  require("Storage").writeJSON("banana-split-storage", data);
+  init();
+};
+
 Bangle.on("drag", (e) => {
   if (e.b === 0) handleDrop(e);
   else handleDrag(e);
 });
+
+Bangle.on("tap", (tap) => {
+  if (tap.dir === "right") {
+    addBanana(tap.double ? 0 : 1);
+    Bangle.buzz(200, 1);
+    if (tap.double) setTimeout(() => Bangle.buzz(200, 1), 400);
+  }
+
+  if (tap.dir === "left") {
+    // Check whether there are bananas to remove
+  }
+});
+
+// TODO: Remove once Bangle.on("tap") is verified
+setWatch(() => addBanana(Math.random() > 0.5 ? 0 : 1), BTN1, true);
