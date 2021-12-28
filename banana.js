@@ -155,12 +155,22 @@ screenConfig[currentScreen].layout.forEach(
   (content) => drawContent(content, 0) // No defaults for functions
 );
 
-// Poly experimentation
-g.setColor(1, 1, 1);
-g.fillPoly([10, 135, 82, 135, 82, 165, 10, 165]);
+// Button experimentation
+g.setColor("#FFFFFF");
+g.fillCircle(25, 150, 15);
+g.fillCircle(67, 150, 15);
 
 g.setColor("#333333");
-g.drawPoly([10, 135, 82, 135, 82, 165, 10, 165], true);
+g.drawCircle(25, 150, 15);
+g.drawCircle(67, 150, 15);
+
+g.setColor("#FFFFFF");
+g.fillRect(25, 135, 67, 165);
+
+g.setColor("#333333");
+g.drawLine(25, 135, 67, 135);
+g.drawLine(25, 165, 67, 165);
+
 g.drawPoly([vw - 10, 135, vw - 82, 135, vw - 82, 165, vw - 10, 165], true);
 
 // @dir: "next" | "prev"
