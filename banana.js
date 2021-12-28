@@ -100,7 +100,7 @@ let currentScreen = 0;
 const views = ["total", "daily", "monthly", "yearly"];
 let currentView = 0;
 
-const init = () => {
+const render = () => {
   g.clear();
 
   data = require("Storage").readJSON("banana-split-storage") || [];
@@ -266,7 +266,7 @@ const init = () => {
   );
 };
 
-init();
+render();
 
 // @dir: "next" | "prev"
 const drawScreens = (dir, distance) => {
@@ -360,8 +360,16 @@ const handleDrop = (e) => {
       }, [1]);
     }
   }
+};
 
-  touchPoint = null;
+const handleTouch = () => {
+  console.log("Touch");
+  g.setColor(screenConfig[currentScreen].colour);
+
+  g.fillRect(0, 50, vw, vh);
+
+  if (currentView === views.length - 1) currentView = 0;
+  else currentView++;
 };
 
 // @doesFit: 0 | 1;
@@ -374,18 +382,18 @@ const addBanana = (doesFit) => {
   data.unshift(entry);
 
   require("Storage").writeJSON("banana-split-storage", data);
-  init();
+  render();
 };
 
 Bangle.on("drag", (e) => {
-  if (e.b === 0) handleDrop(e);
-  else handleDrag(e);
-});
+  if (e.b === 0) {
+    if (Math.abs(touchPoint - e.x) > 2) handleDrop(e);
+    else handleTouch();
 
-Bangle.on("touch", () => {
-  if (currentView === views.length - 1) currentView = 0;
-  else currentView++;
-  // TODO: Call init hear or better custom implementation
+    touchPoint = null;
+  } else {
+    handleDrag(e);
+  }
 });
 
 Bangle.on("tap", (tap) => {
