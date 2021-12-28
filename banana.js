@@ -108,6 +108,48 @@ const screenConfig = [
         x: 90,
         y: 98,
       },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "rect",
+        fill: "#FFFFFF",
+        x: [25, 67],
+        y: [135, 165],
+      },
+      {
+        type: "line",
+        x: [25, 67],
+        y: [135, 135],
+      },
+      {
+        type: "line",
+        x: [25, 67],
+        y: [165, 165],
+      },
     ],
   },
   {
@@ -128,9 +170,43 @@ const hexToRgb = (hex) => {
 };
 
 const drawContent = (content, distance) => {
+  g.setColor(content.colour || content.fill || "#333333");
+
   switch (content.type) {
     case "image":
       g.drawImage(content.content, content.x + distance, content.y);
+      break;
+    case "circle":
+      if (content.fill) {
+        g.fillCircle(content.x + distance, content.y, content.rad);
+      } else {
+        g.drawCircle(content.x + distance, content.y, content.rad);
+      }
+      break;
+    case "rect":
+      if (content.fill) {
+        g.fillRect(
+          content.x[0] + distance,
+          content.y[0],
+          content.x[1] + distance,
+          content.y[1]
+        );
+      } else {
+        g.drawRect(
+          content.x[0] + distance,
+          content.y[0],
+          content.x[1] + distance,
+          content.y[1]
+        );
+      }
+      break;
+    case "line":
+      g.drawLine(
+        content.x[0] + distance,
+        content.y[0],
+        content.x[1] + distance,
+        content.y[1]
+      );
       break;
     case "text":
     default:
@@ -154,22 +230,6 @@ g.setFontAlign(0, 0);
 screenConfig[currentScreen].layout.forEach(
   (content) => drawContent(content, 0) // No defaults for functions
 );
-
-// Button experimentation
-g.setColor("#FFFFFF");
-g.fillCircle(25, 150, 15);
-g.fillCircle(67, 150, 15);
-
-g.setColor("#333333");
-g.drawCircle(25, 150, 15);
-g.drawCircle(67, 150, 15);
-
-g.setColor("#FFFFFF");
-g.fillRect(25, 135, 67, 165);
-
-g.setColor("#333333");
-g.drawLine(25, 135, 67, 135);
-g.drawLine(25, 165, 67, 165);
 
 g.drawPoly([vw - 10, 135, vw - 82, 135, vw - 82, 165, vw - 10, 165], true);
 
