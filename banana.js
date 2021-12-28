@@ -5,6 +5,22 @@ const vh = g.getHeight();
 
 let data = require("Storage").readJSON("banana-count") || [];
 
+let fitCount = data.filter((rec) => rec[Object.keys(rec)[0]] === 1).length;
+
+// TODO: Delete once testing is complete
+const addMockStorage = () => {
+  const obj = {};
+
+  obj[new Date().toISOString()] = Math.random() > 0.5 ? 1 : 0;
+
+  data.unshift(obj);
+
+  require("Storage").writeJSON("banana-count", data);
+  console.log(data);
+};
+
+setWatch(addMockStorage, BTN1, true);
+
 const banana = {
   width: 31,
   height: 32,
@@ -17,9 +33,15 @@ const banana = {
   ),
 };
 
+const partyFace = {
+  width : 27, height : 27, bpp : 16,
+  transparent : 1,
+  buffer : require("heatshrink").decompress(atob("gEBAJ+tutzx1ChABBGru9+4KHlNlwkQiGCBYtBwM5AIUZkkA4oBBkNnAIIHDhMnBIcIsI1HjFgnHAFosg4F7kfNg3+o4BFnfygcWkd1wv9AIMb24JBhd2BIchw41HvOA+cBrMgiFgxeEF44BFpkRFYMTFYlM3QJBAINU7Q1HAIJzBNYPq8I3B9kjGZoBBxnOFYdtvgrBvvdhdWBYcTy6nBGotrtoGBqOB+fj/fjFo/Wk1ekemooHB7vJFIcj65tDHYI3FcIQ1EkMETYPdsxhJGYMWkIBBGoYBBrlQTI5vDU4LfBGot794EBybPMM4IzBHIILFNoMLqo3JAIbXFiGCkHAZpuekhnFAIu9tY1DAIMsjDfDGouc+ZpL3mluXDwcjVpYLBB4NS48Lmo5Fid2keVhMnGINa9YDB8olGzfkhFgpPilMhcoPNgwRFA4ILBnOBCYMAsU7t43FAILXDnPnT5IzBFot7kdaoQRFF4OLQ4gXBDYLhBxnOnfyAIMZozXCgFBwI1HtWjA4vt44JHA44BBI44BBF4I1L1tt0tOZ5IBZGpPuhE0m8D7QBBA4I1jjHjAILXDxswGINc2fN5YZH8sj7nBAIf+k41RiFgnPnpVpNoP189s6Q1BC5PtwnlgRpX8tmF4Nrtuc+YFB0fkNYdk2fF1gBF2sq1mo3uLPJIBLyeEF4OtusAgLZDZ4Msa4gBN3usGqLPBhFhGYUBrXrG4PE0oPBztOvsRAIt86Fsl18+B/BJYIzPSoKfDGofe/Y9BIILbBa5Vk9tDTqYjBiFgNIoBDxlxIIMxkIfKk/c0Pc4IBDBIIRF/sm9Pl9kmEYLTGAIylDCYJvLAJo1B9HE9GEsA1CznzGpI3FU4LfDAKYXBjFg5Fj7GEEYM5841LU4azCgFBwLxBOZYLBB4ITBC4IABnEhuFChA1QAIPe/ZxDAAatBFIIBDZIYADFYQAGGqI5FOYNKtMY8YjFA4ILBB4ITBC4O9+4BF515EoYA="))
+};
+
 const screenConfig = [
   {
-    colour: "#CAFFBF",
+    colour: "#FDFFB6",
     layout: [
       {
         type: "text",
@@ -51,23 +73,43 @@ const screenConfig = [
     ],
   },
   {
-    colour: "#9BF6FF",
+    colour: "#CAFFBF",
     layout: [
       {
         type: "text",
-        content: ">.<",
-        font: "Vector:76",
+        content: "TOTAL",
+        font: "Vector:16",
         x: vw / 2,
-        y: vh / 2,
+        y: 20,
+      },
+      {
+        type: "text",
+        content: fitCount,
+        font: "Vector:58",
+        x: vw / 2,
+        y: 65,
+      },
+      {
+        type: "text",
+        content: "fit",
+        font: "Vector:24",
+        x: 68,
+        y: 113,
+      },
+      {
+        type: "image",
+        content: partyFace,
+        x: 90,
+        y: 98,
       },
     ],
   },
   {
-    colour: "#BDB2FF",
+    colour: "#FFADAD",
     layout: [],
   },
   {
-    colour: "#FFC6FF",
+    colour: "#FDFFB6",
     layout: [],
   },
 ];
@@ -94,7 +136,7 @@ const drawContent = (content, distance) => {
 
 const swipePercentage = 0.3; // how far a user must swipe to get to next/prev screen
 let touchPoint = null;
-let currentScreen = 0;
+let currentScreen = 1;
 
 g.setColor(screenConfig[currentScreen].colour);
 g.fillRect(0, 0, vw, vh);
@@ -106,6 +148,14 @@ g.setFontAlign(0, 0);
 screenConfig[currentScreen].layout.forEach(
   (content) => drawContent(content, 0) // No defaults for functions
 );
+
+// Poly experimentation
+g.setColor(1, 1, 1);
+g.fillPoly([10, 135, 82, 135, 82, 165, 10, 165]);
+
+g.setColor("#333333");
+g.drawPoly([10, 135, 82, 135, 82, 165, 10, 165], true);
+g.drawPoly([vw - 10, 135, vw - 82, 135, vw - 82, 165, vw - 10, 165], true);
 
 // @dir: "next" | "prev"
 const drawScreens = (dir, distance) => {
