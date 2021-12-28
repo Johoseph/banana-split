@@ -150,6 +150,48 @@ const screenConfig = [
         x: [25, 67],
         y: [165, 165],
       },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: vw - 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: vw - 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: vw - 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: vw - 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "rect",
+        fill: "#FFFFFF",
+        x: [vw - 25, vw - 67],
+        y: [135, 165],
+      },
+      {
+        type: "line",
+        x: [vw - 25, vw - 67],
+        y: [135, 135],
+      },
+      {
+        type: "line",
+        x: [vw - 25, vw - 67],
+        y: [165, 165],
+      },
     ],
   },
   {
@@ -230,8 +272,6 @@ g.setFontAlign(0, 0);
 screenConfig[currentScreen].layout.forEach(
   (content) => drawContent(content, 0) // No defaults for functions
 );
-
-g.drawPoly([vw - 10, 135, vw - 82, 135, vw - 82, 165, vw - 10, 165], true);
 
 // @dir: "next" | "prev"
 const drawScreens = (dir, distance) => {
