@@ -45,6 +45,18 @@ const partyFace = {
   ),
 };
 
+const fearFace = {
+  width: 26,
+  height: 27,
+  bpp: 16,
+  transparent: 1,
+  buffer: require("heatshrink").decompress(
+    atob(
+      "gEBAJve/eUyVSxVChEhggBBAoNjhgNBCIIjPAJe9+4lBJAsQ4chs4BBhFhBooVBDIIxVueOD4cp9Ncil9zeF/oBFBINT2Up5IXDDoQxQmOGC4Mhw91nItHAJYVBDIIdBEIQxQpdQF6YBHoXuGpspsoPBQYIXBtt8nlZkfXAINlnYpHrsbB4YVBuucBYJTBbIYxFvfvBYM6xt97ssjEDiwBDjeXGZYNBCoo3BEIMylYpBxlxGYcQwUQ4d1vcb24XBkfYFpIBLHIohBEoIpBFoJlFS4KVBJIbPbmk4EIIlBFIJpDjHjhFhCouOju+73G/2+7uum/GiQBJ11ZCYPPjwZBDoIlFFoMxww3BUoILDz1d+/f/4AF73+xn+o4BGxgNBCgodBEIInDaYYABrfSBION/gbD62awkQAYIgC7gzHCofGjAVF+/eEoIpBrexGYd9i2ui3+1wTCzzfCgADBA4ILB/2tGYmtBIPnjgjDCoJrD/2N00Yvs2B4e09QdF737BoYABEoIzL515CopJH2sLBofE0odCpKFDvfvnPnxlxaIlJGYgVBAAQVDznzCogTCFoIzD0fkXIkSdYoAEiTPImYUJ/3wCIeTwgzDuXDEI3P/+7DQW7A4IxHAInwCptioQxBjHjkHAEZgBG3ml5sGC6cQsAxBtdtaIwBKzfkDIKBDAoOsooZNY4IVBb4Pe/YFBoOBGJovDAA41NSYMIsMAgIBBNIbZBC5MIMYgAHXJeDkZlDGYYBBUIILB2hPGY4IxLAAfdsyXJlNlGIoBB515OIUACYLzTZJYlBZIQzGGo9y4f184vTCoNR8QdBRoIlBGJIBDIIM584XBiFgG4PVgwvLBoIRBCoIZBDoQvMAI+c+bZDHIdBwIBFFoZhDDIIxVAIututrtpxDAAoJBBoKRPAII"
+    )
+  ),
+};
+
 const screenConfig = [
   {
     colour: "#FDFFB6",
@@ -151,6 +163,13 @@ const screenConfig = [
         y: [165, 165],
       },
       {
+        type: "text",
+        content: "sub",
+        font: "Vector:22",
+        x: 47,
+        y: 150,
+      },
+      {
         type: "circle",
         fill: "#FFFFFF",
         x: vw - 25,
@@ -192,11 +211,144 @@ const screenConfig = [
         x: [vw - 25, vw - 67],
         y: [165, 165],
       },
+      {
+        type: "text",
+        content: "add",
+        font: "Vector:22",
+        x: vw - 47,
+        y: 150,
+      },
     ],
   },
   {
     colour: "#FFADAD",
-    layout: [],
+    layout: [
+      {
+        type: "text",
+        content: "TOTAL",
+        font: "Vector:16",
+        x: vw / 2,
+        y: 20,
+      },
+      {
+        type: "text",
+        content: data.length - fitCount,
+        font: "Vector:58",
+        x: vw / 2,
+        y: 65,
+      },
+      {
+        type: "text",
+        content: "split",
+        font: "Vector:24",
+        x: 65,
+        y: 113,
+      },
+      {
+        type: "image",
+        content: fearFace,
+        x: 96,
+        y: 98,
+      },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "rect",
+        fill: "#FFFFFF",
+        x: [25, 67],
+        y: [135, 165],
+      },
+      {
+        type: "line",
+        x: [25, 67],
+        y: [135, 135],
+      },
+      {
+        type: "line",
+        x: [25, 67],
+        y: [165, 165],
+      },
+      {
+        type: "text",
+        content: "sub",
+        font: "Vector:22",
+        x: 47,
+        y: 150,
+      },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: vw - 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        fill: "#FFFFFF",
+        x: vw - 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: vw - 25,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "circle",
+        x: vw - 67,
+        y: 150,
+        rad: 15,
+      },
+      {
+        type: "rect",
+        fill: "#FFFFFF",
+        x: [vw - 25, vw - 67],
+        y: [135, 165],
+      },
+      {
+        type: "line",
+        x: [vw - 25, vw - 67],
+        y: [135, 135],
+      },
+      {
+        type: "line",
+        x: [vw - 25, vw - 67],
+        y: [165, 165],
+      },
+      {
+        type: "text",
+        content: "add",
+        font: "Vector:22",
+        x: vw - 47,
+        y: 150,
+      },
+    ],
   },
   {
     colour: "#FDFFB6",
@@ -260,7 +412,7 @@ const drawContent = (content, distance) => {
 
 const swipePercentage = 0.3; // how far a user must swipe to get to next/prev screen
 let touchPoint = null;
-let currentScreen = 1;
+let currentScreen = 0;
 
 g.setColor(screenConfig[currentScreen].colour);
 g.fillRect(0, 0, vw, vh);
