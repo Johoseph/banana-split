@@ -98,58 +98,63 @@ let touchPoint = null;
 let currentScreen = 0;
 
 const views = ["total", "daily", "monthly", "yearly"];
-let currentView = 0;
+let currentView = [0, 1, 1];
 
-const render = () => {
+const render = (fetch) => {
   g.clear();
 
-  data = require("Storage").readJSON("banana-split-storage") || [];
+  if (fetch) {
+    data = require("Storage").readJSON("banana-split-storage") || [];
 
-  viewsData = {
-    eaten: {},
-    fit: {},
-    split: {},
-  };
+    viewsData = {
+      eaten: {},
+      fit: {},
+      split: {},
+    };
 
-  // Set 'eaten' view data
-  viewsData.eaten.total = data.length;
-  viewsData.eaten.yearly = data.filter(
-    (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
-  ).length;
-  viewsData.eaten.monthly = data.filter(
-    (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
-  ).length;
-  viewsData.eaten.daily = data.filter(
-    (entry) => entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
-  ).length;
+    // Set 'eaten' view data
+    viewsData.eaten.total = data.length;
+    viewsData.eaten.yearly = data.filter(
+      (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
+    ).length;
+    viewsData.eaten.monthly = data.filter(
+      (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
+    ).length;
+    viewsData.eaten.daily = data.filter(
+      (entry) =>
+        entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+    ).length;
 
-  // Set 'fit' view data
-  const fitData = data.filter((entry) => entry.fit === 1);
+    // Set 'fit' view data
+    const fitData = data.filter((entry) => entry.fit === 1);
 
-  viewsData.fit.total = fitData.length;
-  viewsData.fit.yearly = fitData.filter(
-    (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
-  ).length;
-  viewsData.fit.monthly = fitData.filter(
-    (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
-  ).length;
-  viewsData.fit.daily = fitData.filter(
-    (entry) => entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
-  ).length;
+    viewsData.fit.total = fitData.length;
+    viewsData.fit.yearly = fitData.filter(
+      (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
+    ).length;
+    viewsData.fit.monthly = fitData.filter(
+      (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
+    ).length;
+    viewsData.fit.daily = fitData.filter(
+      (entry) =>
+        entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+    ).length;
 
-  // Set 'split' view data
-  const splitData = data.filter((entry) => entry.fit === 0);
+    // Set 'split' view data
+    const splitData = data.filter((entry) => entry.fit === 0);
 
-  viewsData.split.total = splitData.length;
-  viewsData.split.yearly = splitData.filter(
-    (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
-  ).length;
-  viewsData.split.monthly = splitData.filter(
-    (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
-  ).length;
-  viewsData.split.daily = splitData.filter(
-    (entry) => entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
-  ).length;
+    viewsData.split.total = splitData.length;
+    viewsData.split.yearly = splitData.filter(
+      (entry) => entry.dt.substr(0, 4) === new Date().toISOString().substr(0, 4)
+    ).length;
+    viewsData.split.monthly = splitData.filter(
+      (entry) => entry.dt.substr(0, 7) === new Date().toISOString().substr(0, 7)
+    ).length;
+    viewsData.split.daily = splitData.filter(
+      (entry) =>
+        entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+    ).length;
+  }
 
   screenConfig = [
     {
@@ -170,14 +175,14 @@ const render = () => {
         },
         {
           type: "text",
-          content: viewsData.eaten[views[currentView]],
+          content: viewsData.eaten[views[currentView[0]]],
           font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
           x: vw / 2,
           y: vh / 2 + 8,
         },
         {
           type: "text",
-          content: views[currentView].toUpperCase(),
+          content: views[currentView[0]].toUpperCase(),
           font: "Vector:20",
           x: vw / 2,
           y: 148,
@@ -202,14 +207,14 @@ const render = () => {
         },
         {
           type: "text",
-          content: viewsData.fit[views[currentView]],
+          content: viewsData.fit[views[currentView[1]]],
           font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
           x: vw / 2,
           y: vh / 2 + 8,
         },
         {
           type: "text",
-          content: views[currentView].toUpperCase(),
+          content: views[currentView[1]].toUpperCase(),
           font: "Vector:20",
           x: vw / 2,
           y: 148,
@@ -234,14 +239,14 @@ const render = () => {
         },
         {
           type: "text",
-          content: viewsData.split[views[currentView]],
+          content: viewsData.split[views[currentView[2]]],
           font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
           x: vw / 2,
           y: vh / 2 + 8,
         },
         {
           type: "text",
-          content: views[currentView].toUpperCase(),
+          content: views[currentView[2]].toUpperCase(),
           font: "Vector:20",
           x: vw / 2,
           y: 148,
@@ -266,7 +271,7 @@ const render = () => {
   );
 };
 
-render();
+render(true);
 
 // @dir: "next" | "prev"
 const drawScreens = (dir, distance) => {
@@ -363,13 +368,12 @@ const handleDrop = (e) => {
 };
 
 const handleTouch = () => {
-  console.log("Touch");
-  g.setColor(screenConfig[currentScreen].colour);
-
-  g.fillRect(0, 50, vw, vh);
-
-  if (currentView === views.length - 1) currentView = 0;
-  else currentView++;
+  if (currentScreen !== 3) {
+    if (currentView[currentScreen] === views.length - 1)
+      currentView[currentScreen] = 0;
+    else currentView[currentScreen]++;
+    render(false);
+  }
 };
 
 // @doesFit: 0 | 1;
@@ -382,7 +386,7 @@ const addBanana = (doesFit) => {
   data.unshift(entry);
 
   require("Storage").writeJSON("banana-split-storage", data);
-  render();
+  render(true);
 };
 
 Bangle.on("drag", (e) => {
