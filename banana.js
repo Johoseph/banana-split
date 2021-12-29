@@ -389,6 +389,20 @@ const addBanana = (doesFit) => {
   render(true);
 };
 
+const removeBanana = (doesFit) => {
+  const remove = data.findIndex((entry) => {
+    return (
+      entry.fit === doesFit &&
+      entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
+    );
+  });
+
+  if (remove !== -1) data.splice(remove, 1);
+
+  require("Storage").writeJSON("banana-split-storage", data);
+  render(true);
+};
+
 Bangle.on("drag", (e) => {
   if (e.b === 0) {
     if (Math.abs(touchPoint - e.x) > 2) handleDrop(e);
@@ -408,9 +422,21 @@ Bangle.on("tap", (tap) => {
   }
 
   if (tap.dir === "left") {
-    // Check whether there are bananas to remove
+    let canRemove = false;
+
+    // Remove 'fit' banana
+    if (tap.double) canRemove = viewsData.fit.daily > 0;
+    // Remove 'split' banana
+    else canRemove = viewsData.split.daily > 0;
+
+    if (canRemove) {
+      removeBanana(tap.double ? 1 : 0);
+      Bangle.buzz(200, 1);
+      if (tap.double) setTimeout(() => Bangle.buzz(200, 1), 400);
+    }
   }
 });
 
 // TODO: Remove once Bangle.on("tap") is verified
 setWatch(() => addBanana(Math.random() > 0.5 ? 0 : 1), BTN1, true);
+// setWatch(() => removeBanana(Math.random() > 0.5 ? 0 : 1), BTN1, true);
