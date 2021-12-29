@@ -368,6 +368,31 @@ const render = (fetch) => {
           x: [25, vw - 15],
           y: [vh - 25, vh - 24],
         },
+        // Grid lines
+        {
+          type: "line",
+          fill: "#858585",
+          x: [25, vw - 15],
+          y: [15, 15],
+        },
+        {
+          type: "line",
+          fill: "#858585",
+          x: [25, vw - 15],
+          y: [15 + (vw - 40) / 4, 15 + (vw - 40) / 4],
+        },
+        {
+          type: "line",
+          fill: "#858585",
+          x: [25, vw - 15],
+          y: [15 + (vw - 40) / 2, 15 + (vw - 40) / 2],
+        },
+        {
+          type: "line",
+          fill: "#858585",
+          x: [25, vw - 15],
+          y: [15 + ((vw - 40) / 4) * 3, 15 + ((vw - 40) / 4) * 3],
+        },
         // Legend
         {
           type: "text",
