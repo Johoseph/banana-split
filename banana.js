@@ -482,6 +482,8 @@ const handleDrag = (e) => {
 const handleDrop = (e) => {
   let diff = touchPoint - e.x;
   const newPage = Math.abs(diff / vw) >= swipePercentage;
+  const pxPerDraw = 8;
+  const timeout = 10;
 
   if (newPage) {
     // Go to previous
@@ -489,12 +491,12 @@ const handleDrop = (e) => {
       let interval = setInterval(() => {
         if (-diff <= vw) {
           drawScreens("prev", -diff);
-          diff = -(diff - 2) > vw ? diff - 1 : diff - 2;
+          diff = -(diff - pxPerDraw) > vw ? diff - 1 : diff - pxPerDraw;
         } else {
           currentScreen--;
           clearInterval(interval);
         }
-      }, [1]);
+      }, [timeout]);
     }
 
     // Go to next
@@ -502,34 +504,34 @@ const handleDrop = (e) => {
       let interval = setInterval(() => {
         if (diff <= vw) {
           drawScreens("next", vw - diff);
-          diff = diff + 2 > vw ? diff + 1 : diff + 2;
+          diff = diff + pxPerDraw > vw ? diff + 1 : diff + pxPerDraw;
         } else {
           currentScreen++;
           clearInterval(interval);
         }
-      }, [1]);
+      }, [timeout]);
     }
   } else {
     if (diff < 0 && screenConfig[currentScreen - 1]) {
       let interval = setInterval(() => {
         if (-diff >= 0) {
           drawScreens("prev", -diff);
-          diff = diff + 2 > 0 ? diff + 1 : diff + 2;
+          diff = diff + pxPerDraw > 0 ? diff + 1 : diff + pxPerDraw;
         } else {
           clearInterval(interval);
         }
-      }, [1]);
+      }, [timeout]);
     }
 
     if (diff >= 0 && screenConfig[currentScreen + 1]) {
       let interval = setInterval(() => {
         if (diff >= 0) {
           drawScreens("next", vw - diff);
-          diff = diff - 2 > 0 ? diff - 1 : diff - 2;
+          diff = -(diff - pxPerDraw) > 0 ? diff - 1 : diff - pxPerDraw;
         } else {
           clearInterval(interval);
         }
-      }, [1]);
+      }, [timeout]);
     }
   }
 };
