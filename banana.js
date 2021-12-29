@@ -47,13 +47,6 @@ const fearFace = {
   ),
 };
 
-const hexToRgb = (hex) => {
-  return hex
-    .replace("#", "")
-    .match(/.{1,2}/g)
-    .map((rgb) => parseInt(rgb, 16));
-};
-
 // Inject graph points into screenConfig
 const injectGraphPoints = () => {
   const px = (vw - 25 - 15) / 6;
