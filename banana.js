@@ -64,11 +64,47 @@ const injectGraphPoints = () => {
     const oyf = entry.fit * py;
     const oys = entry.split * py;
 
+    if (index !== graphData.length - 1) {
+      const nox = (index + 1) * px;
+      const noyf = graphData[index + 1].fit * py;
+      const noys = graphData[index + 1].split * py;
+
+      screenConfig[3].layout.push(
+        // 'Split' lines
+        {
+          type: "line",
+          colour: screenConfig[2].colour,
+          x: [25 + ox, 25 + nox],
+          y: [vh - 25 - oys, vh - 25 - noys],
+        },
+        {
+          type: "line",
+          colour: screenConfig[2].colour,
+          x: [26 + ox, 26 + nox],
+          y: [vh - 26 - oys, vh - 26 - noys],
+        },
+
+        // 'Split' lines
+        {
+          type: "line",
+          colour: screenConfig[1].colour,
+          x: [25 + ox, 25 + nox],
+          y: [vh - 25 - oyf, vh - 25 - noyf],
+        },
+        {
+          type: "line",
+          colour: screenConfig[1].colour,
+          x: [26 + ox, 26 + nox],
+          y: [vh - 26 - oyf, vh - 26 - noyf],
+        }
+      );
+    }
+
     screenConfig[3].layout.push(
       // 'Split' points
       {
         type: "rect",
-        fill: "#FFADAD",
+        fill: screenConfig[2].colour,
         x: [22 + ox, 29 + ox],
         y: [vh - 22 - oys, vh - 29 - oys],
       },
@@ -76,35 +112,11 @@ const injectGraphPoints = () => {
       // 'Fit' points
       {
         type: "rect",
-        fill: "#CAFFBF",
+        fill: screenConfig[1].colour,
         x: [22 + ox, 29 + ox],
         y: [vh - 22 - oyf, vh - 29 - oyf],
       }
     );
-
-    if (index !== 0) {
-      const pox = (index - 1) * px;
-      const poyf = graphData[index - 1].fit * py;
-      const poys = graphData[index - 1].split * py;
-
-      screenConfig[3].layout.push(
-        // 'Split' lines
-        {
-          type: "line",
-          colour: "#FFADAD",
-          x: [25 + pox, 25 + ox],
-          y: [vh - 25 - poys, vh - 25 - oys],
-        },
-
-        // 'Split' lines
-        {
-          type: "line",
-          colour: "#CAFFBF",
-          x: [25 + pox, 25 + ox],
-          y: [vh - 25 - poyf, vh - 25 - oyf],
-        }
-      );
-    }
   });
 };
 
