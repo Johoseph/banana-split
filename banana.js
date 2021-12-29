@@ -4,12 +4,14 @@ const vh = g.getHeight();
 const days = ["sun", "mon", "tues", "wed", "thur", "fri", "sat"];
 const dayIndex = new Date().getDay();
 
-Array.prototype.at = function (int) {
-  if (int >= 0) return this[int];
-  return this[this.length + int];
-};
-
 let data, screenConfig, viewsData, graphData;
+
+const swipePercentage = 0.3; // how far a user must swipe to get to next/prev screen
+let touchPoint = null;
+let currentScreen = 0;
+
+const views = ["total", "daily", "monthly", "yearly"];
+let currentView = [0, 1, 1];
 
 const banana = {
   width: 31,
@@ -45,6 +47,11 @@ const fearFace = {
       "gEBAKvOvOlimEiABF40YEq4BR3v3scMiGCMh8xw2UyQ5hoUIFosZksyldC9wBFkNnhFhCYZTBQ4I7ZvfvEYnDpdQus5wv9AJtcikhw6DFaYI7TOoppBG54BJsl2SIKBDUII7PlNlC4KfBtnXHbIBFZ4JjDP5ta9bpDvubDoN97tU/VEzMj69djYxJCYM0nE8rNM3VtvgNDnWNP4Y/J1t1O4olBG4MLq0DiwBDlf4HpNlnYTFAIJVBBYJ/Ff4I9HJIINBrkULIMb243FIYIjBJIKvLB4J5BPoJZFqnaUYMQ4YxBznzHYd794JBkOHEIMTu4ZBjeXTooBVTYY/DaoNkuwzCgg9DWYIJBBoIbBHIMj7BxNAKZ5BQII9BA4JvBPobzDjMlDY+233fr/nv/Pj22q/GiQBB70u80tAIIJD30T43dDIe+72OjopFqeyG4NKtNrtoFBoXuCIvXn//ABH++H+o4BIpP/3YXH+/fz1dYombG4IABnPnW4WWB4fO/odD88c40YH41qHo//zIPD62aDIv3P4yxBHIL1DBION/nOiIuBDIIfBiGCB4Mxw33zwmCmo9GtQzD0sUNYdjhgLD+3Tz0ZGYMp9IRDAAOV7PulZhCAAVzxwRFMomZHo2tDIdChAZFSwkzCoPGiVr94RFT4wACymSCIq/BBgV4Ho2MDIZ1BC4chgg9EiQXDwdFHplWDAeMuNrtu9+73E+D3I7gNB999DIfe/YZEtQVDuXDHIMpsoDB6sGb4z5CABFWHY67HABC3CAIdBwI5BrXrAYOj8glGH4N4D4hFBEIw/KzIZE7n+54THiFgHIOc+YDBqPiFZwBi4mlW4kBfIf184fRzfkTYJfBmMhb4Pt44dRsVCGoOMuI9BXYeDkYdPrQdCAA5DB5sGDpvlswXD737HoIDCD4QPBDpd7kY7JAAcg4A9NdYITBOoS3BAIVrtoLBUoIdLhFgHpoABY4IdJ0fkB4MIsI7FAIcY8YPBZIIdHU4I7PAAKNBDo/VDomtuo9J515JYQ/KALO0orlBFIKtCHZA/JmMhLII7bwcjO4bxHH5spsobDQIPlsw5TdoMg4AfDxlxHaIBFSIQAEQYJlB4mlAIIzBJIIFBG4JRBV4YABL4JjBHa4BD737S4LDDACI5BznzHLYBJ1t1vfvnPnAIMY8YFDJ4KtBKoInT"
     )
   ),
+};
+
+Array.prototype.at = function (int) {
+  if (int >= 0) return this[int];
+  return this[this.length + int];
 };
 
 // Inject graph points into screenConfig
@@ -166,12 +173,29 @@ const drawContent = (content, distance) => {
   }
 };
 
-const swipePercentage = 0.3; // how far a user must swipe to get to next/prev screen
-let touchPoint = null;
-let currentScreen = 0;
+// @dir: "next" | "prev"
+const drawScreens = (dir, distance) => {
+  // Background
+  g.setColor(
+    screenConfig[dir === "prev" ? currentScreen - 1 : currentScreen].colour
+  );
+  g.fillRect(0, 0, distance, vh);
 
-const views = ["total", "daily", "monthly", "yearly"];
-let currentView = [0, 1, 1];
+  g.setColor(
+    screenConfig[dir === "prev" ? currentScreen : currentScreen + 1].colour
+  );
+  g.fillRect(distance, 0, vw, vh);
+
+  // Content
+  g.setColor("#333333");
+  screenConfig[
+    dir === "prev" ? currentScreen - 1 : currentScreen
+  ].layout.forEach((content) => drawContent(content, distance - vw));
+
+  screenConfig[
+    dir === "prev" ? currentScreen : currentScreen + 1
+  ].layout.forEach((content) => drawContent(content, distance));
+};
 
 const render = (fetch) => {
   g.clear();
@@ -440,32 +464,6 @@ const render = (fetch) => {
   );
 };
 
-render(true);
-
-// @dir: "next" | "prev"
-const drawScreens = (dir, distance) => {
-  // Background
-  g.setColor(
-    screenConfig[dir === "prev" ? currentScreen - 1 : currentScreen].colour
-  );
-  g.fillRect(0, 0, distance, vh);
-
-  g.setColor(
-    screenConfig[dir === "prev" ? currentScreen : currentScreen + 1].colour
-  );
-  g.fillRect(distance, 0, vw, vh);
-
-  // Content
-  g.setColor("#333333");
-  screenConfig[
-    dir === "prev" ? currentScreen - 1 : currentScreen
-  ].layout.forEach((content) => drawContent(content, distance - vw));
-
-  screenConfig[
-    dir === "prev" ? currentScreen : currentScreen + 1
-  ].layout.forEach((content) => drawContent(content, distance));
-};
-
 const handleDrag = (e) => {
   if (touchPoint) {
     const diff = touchPoint - e.x;
@@ -614,3 +612,5 @@ setWatch(
   BTN1,
   true
 );
+
+render(true);
