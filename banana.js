@@ -230,7 +230,7 @@ const render = (fetch) => {
 
       graphData.push({
         fit: dateData.filter((entry) => entry.fit === 1).length,
-        split: dateData.filter((entry) => entry.fit === 1).length,
+        split: dateData.filter((entry) => entry.fit === 0).length,
       });
     }
 
