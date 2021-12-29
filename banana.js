@@ -613,6 +613,11 @@ Bangle.on("tap", (tap) => {
   }
 });
 
-// TODO: Remove once Bangle.on("tap") is verified
-setWatch(() => addBanana(Math.random() > 0.5 ? 0 : 1), BTN1, true);
-// setWatch(() => removeBanana(Math.random() > 0.5 ? 0 : 1), BTN1, true);
+setWatch(
+  () => {
+    currentScreen = 0;
+    render(false);
+  },
+  BTN1,
+  true
+);
