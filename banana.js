@@ -596,6 +596,9 @@ const getY = (x, index) => {
 };
 
 const confettiCannon = (doesFit) => {
+  // Do not run confetti cannon on intensive screens
+  if (currentScreen === 3) return;
+
   canDrag = false;
 
   const time = 10;
