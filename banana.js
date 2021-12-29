@@ -13,6 +13,8 @@ let currentScreen = 0;
 const views = ["total", "daily", "monthly", "yearly"];
 let currentView = [0, 1, 1];
 
+let canDrag = true;
+
 const banana = {
   width: 31,
   height: 32,
@@ -197,7 +199,7 @@ const drawScreens = (dir, distance) => {
   ].layout.forEach((content) => drawContent(content, distance));
 };
 
-const render = (fetch) => {
+const render = (fetch, noConfig) => {
   g.clear();
 
   if (fetch) {
@@ -272,185 +274,187 @@ const render = (fetch) => {
     graphData.reverse();
   }
 
-  screenConfig = [
-    {
-      colour: "#FDFFB6",
-      layout: [
-        {
-          type: "image",
-          content: banana,
-          x: 24,
-          y: 16,
-        },
-        {
-          type: "text",
-          content: "eaten",
-          font: "Vector:32",
-          x: 110,
-          y: 34,
-        },
-        {
-          type: "text",
-          content: viewsData.eaten[views[currentView[0]]],
-          font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
-          x: vw / 2,
-          y: vh / 2 + 8,
-        },
-        {
-          type: "text",
-          content: views[currentView[0]].toUpperCase(),
-          font: "Vector:20",
-          x: vw / 2,
-          y: 148,
-        },
-      ],
-    },
-    {
-      colour: "#CAFFBF",
-      layout: [
-        {
-          type: "text",
-          content: "fit",
-          font: "Vector:32",
-          x: 65,
-          y: 34,
-        },
-        {
-          type: "image",
-          content: partyFace,
-          x: 93,
-          y: 16,
-        },
-        {
-          type: "text",
-          content: viewsData.fit[views[currentView[1]]],
-          font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
-          x: vw / 2,
-          y: vh / 2 + 8,
-        },
-        {
-          type: "text",
-          content: views[currentView[1]].toUpperCase(),
-          font: "Vector:20",
-          x: vw / 2,
-          y: 148,
-        },
-      ],
-    },
-    {
-      colour: "#FFADAD",
-      layout: [
-        {
-          type: "text",
-          content: "split",
-          font: "Vector:32",
-          x: 67,
-          y: 34,
-        },
-        {
-          type: "image",
-          content: fearFace,
-          x: 109,
-          y: 16,
-        },
-        {
-          type: "text",
-          content: viewsData.split[views[currentView[2]]],
-          font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
-          x: vw / 2,
-          y: vh / 2 + 8,
-        },
-        {
-          type: "text",
-          content: views[currentView[2]].toUpperCase(),
-          font: "Vector:20",
-          x: vw / 2,
-          y: 148,
-        },
-      ],
-    },
-    {
-      colour: "#FFFFFF",
-      layout: [
-        // Axis
-        {
-          type: "rect",
-          fill: "#333333",
-          x: [25, 26],
-          y: [15, vh - 25],
-        },
-        {
-          type: "rect",
-          fill: "#333333",
-          x: [25, vw - 15],
-          y: [vh - 25, vh - 24],
-        },
-        // Grid lines
-        {
-          type: "line",
-          fill: "#858585",
-          x: [25, vw - 15],
-          y: [15, 15],
-        },
-        {
-          type: "line",
-          fill: "#858585",
-          x: [25, vw - 15],
-          y: [15 + (vw - 40) / 4, 15 + (vw - 40) / 4],
-        },
-        {
-          type: "line",
-          fill: "#858585",
-          x: [25, vw - 15],
-          y: [15 + (vw - 40) / 2, 15 + (vw - 40) / 2],
-        },
-        {
-          type: "line",
-          fill: "#858585",
-          x: [25, vw - 15],
-          y: [15 + ((vw - 40) / 4) * 3, 15 + ((vw - 40) / 4) * 3],
-        },
-        // Legend
-        {
-          type: "text",
-          content: 2,
-          font: "Vector:14",
-          x: 15,
-          y: (vh - 10) / 2,
-        },
-        {
-          type: "text",
-          content: 4,
-          font: "Vector:14",
-          x: 15,
-          y: 15,
-        },
-        {
-          type: "text",
-          content: days.at(dayIndex - 6),
-          font: "Vector:14",
-          x: 25,
-          y: vh - 10,
-        },
-        {
-          type: "text",
-          content: days.at(dayIndex - 3),
-          font: "Vector:14",
-          x: (vw + 10) / 2,
-          y: vh - 10,
-        },
-        {
-          type: "text",
-          content: days.at(dayIndex),
-          font: "Vector:14",
-          x: vh - 15,
-          y: vh - 10,
-        },
-      ],
-    },
-  ];
+  if (!noConfig) {
+    screenConfig = [
+      {
+        colour: "#FDFFB6",
+        layout: [
+          {
+            type: "image",
+            content: banana,
+            x: 24,
+            y: 16,
+          },
+          {
+            type: "text",
+            content: "eaten",
+            font: "Vector:32",
+            x: 110,
+            y: 34,
+          },
+          {
+            type: "text",
+            content: viewsData.eaten[views[currentView[0]]],
+            font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
+            x: vw / 2,
+            y: vh / 2 + 8,
+          },
+          {
+            type: "text",
+            content: views[currentView[0]].toUpperCase(),
+            font: "Vector:20",
+            x: vw / 2,
+            y: 148,
+          },
+        ],
+      },
+      {
+        colour: "#CAFFBF",
+        layout: [
+          {
+            type: "text",
+            content: "fit",
+            font: "Vector:32",
+            x: 65,
+            y: 34,
+          },
+          {
+            type: "image",
+            content: partyFace,
+            x: 93,
+            y: 16,
+          },
+          {
+            type: "text",
+            content: viewsData.fit[views[currentView[1]]],
+            font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
+            x: vw / 2,
+            y: vh / 2 + 8,
+          },
+          {
+            type: "text",
+            content: views[currentView[1]].toUpperCase(),
+            font: "Vector:20",
+            x: vw / 2,
+            y: 148,
+          },
+        ],
+      },
+      {
+        colour: "#FFADAD",
+        layout: [
+          {
+            type: "text",
+            content: "split",
+            font: "Vector:32",
+            x: 67,
+            y: 34,
+          },
+          {
+            type: "image",
+            content: fearFace,
+            x: 109,
+            y: 16,
+          },
+          {
+            type: "text",
+            content: viewsData.split[views[currentView[2]]],
+            font: `Vector:${data.length.toString().length >= 4 ? "52" : "76"}`,
+            x: vw / 2,
+            y: vh / 2 + 8,
+          },
+          {
+            type: "text",
+            content: views[currentView[2]].toUpperCase(),
+            font: "Vector:20",
+            x: vw / 2,
+            y: 148,
+          },
+        ],
+      },
+      {
+        colour: "#FFFFFF",
+        layout: [
+          // Axis
+          {
+            type: "rect",
+            fill: "#333333",
+            x: [25, 26],
+            y: [15, vh - 25],
+          },
+          {
+            type: "rect",
+            fill: "#333333",
+            x: [25, vw - 15],
+            y: [vh - 25, vh - 24],
+          },
+          // Grid lines
+          {
+            type: "line",
+            fill: "#858585",
+            x: [25, vw - 15],
+            y: [15, 15],
+          },
+          {
+            type: "line",
+            fill: "#858585",
+            x: [25, vw - 15],
+            y: [15 + (vw - 40) / 4, 15 + (vw - 40) / 4],
+          },
+          {
+            type: "line",
+            fill: "#858585",
+            x: [25, vw - 15],
+            y: [15 + (vw - 40) / 2, 15 + (vw - 40) / 2],
+          },
+          {
+            type: "line",
+            fill: "#858585",
+            x: [25, vw - 15],
+            y: [15 + ((vw - 40) / 4) * 3, 15 + ((vw - 40) / 4) * 3],
+          },
+          // Legend
+          {
+            type: "text",
+            content: 2,
+            font: "Vector:14",
+            x: 15,
+            y: (vh - 10) / 2,
+          },
+          {
+            type: "text",
+            content: 4,
+            font: "Vector:14",
+            x: 15,
+            y: 15,
+          },
+          {
+            type: "text",
+            content: days.at(dayIndex - 6),
+            font: "Vector:14",
+            x: 25,
+            y: vh - 10,
+          },
+          {
+            type: "text",
+            content: days.at(dayIndex - 3),
+            font: "Vector:14",
+            x: (vw + 10) / 2,
+            y: vh - 10,
+          },
+          {
+            type: "text",
+            content: days.at(dayIndex),
+            font: "Vector:14",
+            x: vh - 15,
+            y: vh - 10,
+          },
+        ],
+      },
+    ];
 
-  injectGraphPoints();
+    injectGraphPoints();
+  }
 
   g.setColor(screenConfig[currentScreen].colour);
   g.fillRect(0, 0, vw, vh);
@@ -483,7 +487,7 @@ const handleDrop = (e) => {
   let diff = touchPoint - e.x;
   const newPage = Math.abs(diff / vw) >= swipePercentage;
   const pxPerDraw = 8;
-  const timeout = 10;
+  const time = 10;
 
   if (newPage) {
     // Go to previous
@@ -496,7 +500,7 @@ const handleDrop = (e) => {
           currentScreen--;
           clearInterval(interval);
         }
-      }, [timeout]);
+      }, time);
     }
 
     // Go to next
@@ -509,7 +513,7 @@ const handleDrop = (e) => {
           currentScreen++;
           clearInterval(interval);
         }
-      }, [timeout]);
+      }, time);
     }
   } else {
     if (diff < 0 && screenConfig[currentScreen - 1]) {
@@ -520,7 +524,7 @@ const handleDrop = (e) => {
         } else {
           clearInterval(interval);
         }
-      }, [timeout]);
+      }, time);
     }
 
     if (diff >= 0 && screenConfig[currentScreen + 1]) {
@@ -531,7 +535,7 @@ const handleDrop = (e) => {
         } else {
           clearInterval(interval);
         }
-      }, [timeout]);
+      }, time);
     }
   }
 };
@@ -570,6 +574,111 @@ const removeBanana = (doesFit) => {
 
   require("Storage").writeJSON("banana-split-storage", data);
   render(true);
+
+  confettiCannon(doesFit);
+};
+
+const getY = (x, index) => {
+  switch (index) {
+    case 1:
+      return Math.pow(x - 144, 2) / 240 + 90;
+    case 2:
+      return Math.pow(x - 134, 2) / 170 + 70;
+    case 3:
+      return Math.pow(x - 110, 2) / 40 + 70;
+    case 5:
+      return Math.pow(x - 55, 2) / 150 + 60;
+    case 0:
+    case 4:
+    default:
+      return Math.pow(x - 88, 2) / 102 + 100;
+  }
+};
+
+const confettiCannon = (doesFit) => {
+  canDrag = false;
+
+  const time = 10;
+  let points = [
+    {
+      x: 0,
+      rotate: 0,
+      image:
+        doesFit === 2 || Math.random() > 0.5
+          ? banana
+          : doesFit
+          ? partyFace
+          : fearFace,
+    },
+    {
+      x: 0,
+      rotate: 0,
+      image:
+        doesFit === 2 || Math.random() > 0.5
+          ? banana
+          : doesFit
+          ? partyFace
+          : fearFace,
+    },
+    {
+      x: 0,
+      rotate: 0,
+      image:
+        doesFit === 2 || Math.random() > 0.5
+          ? banana
+          : doesFit
+          ? partyFace
+          : fearFace,
+    },
+    {
+      x: vw,
+      rotate: 0,
+      image:
+        doesFit === 2 || Math.random() > 0.5
+          ? banana
+          : doesFit
+          ? partyFace
+          : fearFace,
+    },
+    {
+      x: vw,
+      rotate: 0,
+      image:
+        doesFit === 2 || Math.random() > 0.5
+          ? banana
+          : doesFit
+          ? partyFace
+          : fearFace,
+    },
+    {
+      x: vw,
+      rotate: 0,
+      image:
+        doesFit === 2 || Math.random() > 0.5
+          ? banana
+          : doesFit
+          ? partyFace
+          : fearFace,
+    },
+  ];
+
+  let interval = setInterval(() => {
+    render(false, true);
+    for (let i = 0; i < 6; i++) {
+      const p = points[i];
+      g.drawImage(p.image, p.x, getY(p.x, i), { rotate: p.rotate });
+
+      if (i < 3) p.x += 2;
+      else p.x -= 2;
+      if (i % 2 === 0) p.rotate += 0.1;
+      else p.rotate -= 0.1;
+    }
+  }, time);
+
+  setTimeout(() => {
+    canDrag = true;
+    clearInterval(interval);
+  }, 1000);
 };
 
 Bangle.on("drag", (e) => {
@@ -579,7 +688,7 @@ Bangle.on("drag", (e) => {
 
     touchPoint = null;
   } else {
-    handleDrag(e);
+    if (canDrag) handleDrag(e);
   }
 });
 
@@ -605,6 +714,8 @@ Bangle.on("tap", (tap) => {
     }
   }
 });
+
+Bangle.on("twist", () => confettiCannon(2));
 
 setWatch(
   () => {
