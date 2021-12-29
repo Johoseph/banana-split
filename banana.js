@@ -1,7 +1,15 @@
 const vw = g.getWidth();
 const vh = g.getHeight();
 
-let data, screenConfig, viewsData;
+const days = ["sun", "mon", "tues", "wed", "thur", "fri", "sat"];
+const dayIndex = new Date().getDay();
+
+Array.prototype.at = function (int) {
+  if (int >= 0) return this[int];
+  return this[this.length + int];
+};
+
+let data, screenConfig, viewsData, graphData;
 
 const banana = {
   width: 31,
@@ -44,6 +52,60 @@ const hexToRgb = (hex) => {
     .replace("#", "")
     .match(/.{1,2}/g)
     .map((rgb) => parseInt(rgb, 16));
+};
+
+// Inject graph points into screenConfig
+const injectGraphPoints = () => {
+  const px = (vw - 25 - 15) / 6;
+  const py = (vw - 25 - 15) / 4;
+
+  graphData.forEach((entry, index) => {
+    const ox = index * px;
+    const oyf = entry.fit * py;
+    const oys = entry.split * py;
+
+    screenConfig[3].layout.push(
+      // 'Split' points
+      {
+        type: "rect",
+        fill: "#FFADAD",
+        x: [22 + ox, 29 + ox],
+        y: [vh - 22 - oys, vh - 29 - oys],
+      },
+
+      // 'Fit' points
+      {
+        type: "rect",
+        fill: "#CAFFBF",
+        x: [22 + ox, 29 + ox],
+        y: [vh - 22 - oyf, vh - 29 - oyf],
+      }
+    );
+
+    if (index !== 0) {
+      const pox = (index - 1) * px;
+      const poyf = graphData[index - 1].fit * py;
+      const poys = graphData[index - 1].split * py;
+
+      screenConfig[3].layout.push(
+        // 'Split' lines
+        {
+          type: "line",
+          colour: "#FFADAD",
+          x: [25 + pox, 25 + ox],
+          y: [vh - 25 - poys, vh - 25 - oys],
+        },
+
+        // 'Split' lines
+        {
+          type: "line",
+          colour: "#CAFFBF",
+          x: [25 + pox, 25 + ox],
+          y: [vh - 25 - poyf, vh - 25 - oyf],
+        }
+      );
+    }
+  });
 };
 
 const drawContent = (content, distance) => {
@@ -154,6 +216,25 @@ const render = (fetch) => {
       (entry) =>
         entry.dt.substr(0, 10) === new Date().toISOString().substr(0, 10)
     ).length;
+
+    // Set graph data
+    graphData = [];
+
+    for (let i = 0; i < 7; i++) {
+      let dt = new Date();
+      dt.setDate(new Date().getDate() - i);
+
+      const dateData = data.filter(
+        (entry) => entry.dt.substr(0, 10) === dt.toISOString().substr(0, 10)
+      );
+
+      graphData.push({
+        fit: dateData.filter((entry) => entry.fit === 1).length,
+        split: dateData.filter((entry) => entry.fit === 1).length,
+      });
+    }
+
+    graphData.reverse();
   }
 
   screenConfig = [
@@ -255,9 +336,61 @@ const render = (fetch) => {
     },
     {
       colour: "#FDFFB6",
-      layout: [],
+      layout: [
+        // Axis
+        {
+          type: "rect",
+          fill: "#333333",
+          x: [25, 26],
+          y: [15, vh - 25],
+        },
+        {
+          type: "rect",
+          fill: "#333333",
+          x: [25, vw - 15],
+          y: [vh - 25, vh - 24],
+        },
+        // Legend
+        {
+          type: "text",
+          content: 2,
+          font: "Vector:14",
+          x: 15,
+          y: (vh - 10) / 2,
+        },
+        {
+          type: "text",
+          content: 4,
+          font: "Vector:14",
+          x: 15,
+          y: 15,
+        },
+        {
+          type: "text",
+          content: days.at(dayIndex - 6),
+          font: "Vector:14",
+          x: 25,
+          y: vh - 10,
+        },
+        {
+          type: "text",
+          content: days.at(dayIndex - 3),
+          font: "Vector:14",
+          x: (vw + 10) / 2,
+          y: vh - 10,
+        },
+        {
+          type: "text",
+          content: days.at(dayIndex),
+          font: "Vector:14",
+          x: vh - 15,
+          y: vh - 10,
+        },
+      ],
     },
   ];
+
+  injectGraphPoints();
 
   g.setColor(screenConfig[currentScreen].colour);
   g.fillRect(0, 0, vw, vh);
