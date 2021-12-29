@@ -81,7 +81,10 @@ const injectGraphPoints = () => {
           type: "line",
           colour: screenConfig[2].colour,
           x: [26 + ox, 26 + nox],
-          y: [vh - 26 - oys, vh - 26 - noys],
+          y: [
+            vh - 25 - oys + (oys > noys ? -1 : 1),
+            vh - 25 - noys + (oys > noys ? -1 : 1),
+          ],
         },
 
         // 'Split' lines
@@ -95,7 +98,10 @@ const injectGraphPoints = () => {
           type: "line",
           colour: screenConfig[1].colour,
           x: [26 + ox, 26 + nox],
-          y: [vh - 26 - oyf, vh - 26 - noyf],
+          y: [
+            vh - 25 - oyf + (oyf > noyf ? -1 : 1),
+            vh - 25 - noyf + (oyf > noyf ? -1 : 1),
+          ],
         }
       );
     }
@@ -347,7 +353,7 @@ const render = (fetch) => {
       ],
     },
     {
-      colour: "#FDFFB6",
+      colour: "#FFFFFF",
       layout: [
         // Axis
         {
