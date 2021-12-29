@@ -602,68 +602,15 @@ const confettiCannon = (doesFit) => {
   canDrag = false;
 
   const time = 10;
-  let points = [
-    {
-      x: 0,
+  let points = [];
+
+  for (let i = 0; i < 6; i++) {
+    points.push({
+      x: i < 3 ? 0 : vw,
       rotate: 0,
-      image:
-        doesFit === 2 || Math.random() > 0.5
-          ? banana
-          : doesFit
-          ? partyFace
-          : fearFace,
-    },
-    {
-      x: 0,
-      rotate: 0,
-      image:
-        doesFit === 2 || Math.random() > 0.5
-          ? banana
-          : doesFit
-          ? partyFace
-          : fearFace,
-    },
-    {
-      x: 0,
-      rotate: 0,
-      image:
-        doesFit === 2 || Math.random() > 0.5
-          ? banana
-          : doesFit
-          ? partyFace
-          : fearFace,
-    },
-    {
-      x: vw,
-      rotate: 0,
-      image:
-        doesFit === 2 || Math.random() > 0.5
-          ? banana
-          : doesFit
-          ? partyFace
-          : fearFace,
-    },
-    {
-      x: vw,
-      rotate: 0,
-      image:
-        doesFit === 2 || Math.random() > 0.5
-          ? banana
-          : doesFit
-          ? partyFace
-          : fearFace,
-    },
-    {
-      x: vw,
-      rotate: 0,
-      image:
-        doesFit === 2 || Math.random() > 0.5
-          ? banana
-          : doesFit
-          ? partyFace
-          : fearFace,
-    },
-  ];
+      image: doesFit === 2 ? banana : doesFit === 1 ? partyFace : fearFace,
+    });
+  }
 
   let interval = setInterval(() => {
     render(false, true);
