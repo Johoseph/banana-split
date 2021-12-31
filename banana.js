@@ -473,10 +473,11 @@ const handleDrag = (e) => {
     const diff = touchPoint - e.x;
 
     // Backwards swipe
-    if (diff < 0 && screenConfig[currentScreen - 1]) drawScreens("prev", -diff);
+    if (diff < 0 && currentScreen !== 0 && currentScreen !== 3)
+      drawScreens("prev", -diff);
 
     // Forwards swipe
-    if (diff >= 0 && screenConfig[currentScreen + 1])
+    if (diff >= 0 && currentScreen !== 2 && currentScreen !== 3)
       drawScreens("next", vw - diff);
   } else {
     touchPoint = e.x;
@@ -486,17 +487,18 @@ const handleDrag = (e) => {
 const handleDrop = (e) => {
   let diff = touchPoint - e.x;
   const newPage = Math.abs(diff / vw) >= swipePercentage;
-  const pxPerDraw = 8;
-  const time = 10;
+  const pxPerDraw = 25;
+  const time = 50;
 
   if (newPage) {
     // Go to previous
-    if (diff < 0 && screenConfig[currentScreen - 1]) {
+    if (diff < 0 && currentScreen !== 0 && currentScreen !== 3) {
       let interval = setInterval(() => {
-        if (-diff <= vw) {
+        if (-diff < vw) {
           drawScreens("prev", -diff);
-          diff = -(diff - pxPerDraw) > vw ? diff - 1 : diff - pxPerDraw;
+          diff = -(diff - pxPerDraw) > vw ? -vw : diff - pxPerDraw;
         } else {
+          drawScreens("prev", vw);
           currentScreen--;
           clearInterval(interval);
         }
@@ -504,35 +506,38 @@ const handleDrop = (e) => {
     }
 
     // Go to next
-    if (diff >= 0 && screenConfig[currentScreen + 1]) {
+    if (diff >= 0 && currentScreen !== 2 && currentScreen !== 3) {
       let interval = setInterval(() => {
-        if (diff <= vw) {
+        if (diff < vw) {
           drawScreens("next", vw - diff);
-          diff = diff + pxPerDraw > vw ? diff + 1 : diff + pxPerDraw;
+          diff = diff + pxPerDraw > vw ? vw : diff + pxPerDraw;
         } else {
+          drawScreens("next", 0);
           currentScreen++;
           clearInterval(interval);
         }
       }, time);
     }
   } else {
-    if (diff < 0 && screenConfig[currentScreen - 1]) {
+    if (diff < 0 && currentScreen !== 0 && currentScreen !== 3) {
       let interval = setInterval(() => {
-        if (-diff >= 0) {
+        if (-diff > 0) {
           drawScreens("prev", -diff);
-          diff = diff + pxPerDraw > 0 ? diff + 1 : diff + pxPerDraw;
+          diff = diff + pxPerDraw > 0 ? 0 : diff + pxPerDraw;
         } else {
+          drawScreens("prev", 0);
           clearInterval(interval);
         }
       }, time);
     }
 
-    if (diff >= 0 && screenConfig[currentScreen + 1]) {
+    if (diff >= 0 && currentScreen !== 2 && currentScreen !== 3) {
       let interval = setInterval(() => {
-        if (diff >= 0) {
+        if (diff > 0) {
           drawScreens("next", vw - diff);
-          diff = -(diff - pxPerDraw) > 0 ? diff - 1 : diff - pxPerDraw;
+          diff = -(diff - pxPerDraw) > 0 ? 0 : diff - pxPerDraw;
         } else {
+          drawScreens("next", vw);
           clearInterval(interval);
         }
       }, time);
@@ -669,7 +674,8 @@ Bangle.on("twist", () => confettiCannon(2));
 
 setWatch(
   () => {
-    currentScreen = 0;
+    if (currentScreen === 3) currentScreen = 0;
+    else currentScreen = 3;
     render(false);
   },
   BTN1,
