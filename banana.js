@@ -14,6 +14,7 @@ const views = ["total", "daily", "monthly", "yearly"];
 let currentView = [0, 1, 1];
 
 let canDrag = true;
+let canTwist = true; // Prevents twist being called on top/bottom taps
 
 const banana = {
   width: 31,
@@ -466,6 +467,8 @@ const render = (fetch, noConfig) => {
   screenConfig[currentScreen].layout.forEach(
     (content) => drawContent(content, 0) // No defaults for functions
   );
+
+  Bangle.setLCDPower(1);
 };
 
 const handleDrag = (e) => {
@@ -564,6 +567,7 @@ const addBanana = (doesFit) => {
   data.unshift(entry);
 
   require("Storage").writeJSON("banana-split-storage", data);
+  currentScreen = doesFit === 1 ? 1 : 2;
   render(true);
 
   confettiCannon(doesFit);
@@ -580,6 +584,7 @@ const removeBanana = (doesFit) => {
   if (remove !== -1) data.splice(remove, 1);
 
   require("Storage").writeJSON("banana-split-storage", data);
+  currentScreen = doesFit === 1 ? 1 : 2;
   render(true);
 };
 
@@ -650,13 +655,16 @@ Bangle.on("drag", (e) => {
 });
 
 Bangle.on("tap", (tap) => {
-  if (tap.dir === "right") {
+  canTwist = false;
+  setTimeout(() => (canTwist = true), 2000);
+
+  if (tap.dir === "top") {
     addBanana(tap.double ? 1 : 0);
     Bangle.buzz(200, 1);
     if (tap.double) setTimeout(() => Bangle.buzz(200, 1), 300);
   }
 
-  if (tap.dir === "left") {
+  if (tap.dir === "bottom") {
     let canRemove = false;
 
     // Remove 'fit' banana
@@ -672,7 +680,7 @@ Bangle.on("tap", (tap) => {
   }
 });
 
-Bangle.on("twist", () => confettiCannon(2));
+Bangle.on("twist", () => setTimeout(() => canTwist && confettiCannon(2), 500));
 
 setWatch(
   () => {
