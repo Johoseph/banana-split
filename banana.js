@@ -565,6 +565,8 @@ const addBanana = (doesFit) => {
 
   require("Storage").writeJSON("banana-split-storage", data);
   render(true);
+
+  confettiCannon(doesFit);
 };
 
 const removeBanana = (doesFit) => {
@@ -579,8 +581,6 @@ const removeBanana = (doesFit) => {
 
   require("Storage").writeJSON("banana-split-storage", data);
   render(true);
-
-  confettiCannon(doesFit);
 };
 
 const getY = (x, index) => {
@@ -606,7 +606,8 @@ const confettiCannon = (doesFit) => {
 
   canDrag = false;
 
-  const time = 10;
+  const dx = 30;
+  const time = 150;
   let points = [];
 
   for (let i = 0; i < 6; i++) {
@@ -623,8 +624,8 @@ const confettiCannon = (doesFit) => {
       const p = points[i];
       g.drawImage(p.image, p.x, getY(p.x, i), { rotate: p.rotate });
 
-      if (i < 3) p.x += 2;
-      else p.x -= 2;
+      if (i < 3) p.x += dx;
+      else p.x -= dx;
       if (i % 2 === 0) p.rotate += 0.1;
       else p.rotate -= 0.1;
     }
@@ -632,8 +633,9 @@ const confettiCannon = (doesFit) => {
 
   setTimeout(() => {
     canDrag = true;
+    render(false);
     clearInterval(interval);
-  }, 1000);
+  }, 1200);
 };
 
 Bangle.on("drag", (e) => {
@@ -651,7 +653,7 @@ Bangle.on("tap", (tap) => {
   if (tap.dir === "right") {
     addBanana(tap.double ? 1 : 0);
     Bangle.buzz(200, 1);
-    if (tap.double) setTimeout(() => Bangle.buzz(200, 1), 400);
+    if (tap.double) setTimeout(() => Bangle.buzz(200, 1), 300);
   }
 
   if (tap.dir === "left") {
