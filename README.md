@@ -12,9 +12,10 @@ Looking at the container, one of my first thoughts was _"bananas don't have a co
 
 ## Results
 
-|  Month  | 🍌 eaten | fit 🥳 | split 😨 |
-| :-----: | :------: | :----: | :------: |
-| January |  _TBA_   | _TBA_  |  _TBA_   |
+|  Month   | 🍌 eaten | fit 🥳 | split 😨 |
+| :------: | :------: | :----: | :------: |
+| January  | 9        | 3      |  6       |
+| February | _TBA_    | _TBA_  |  _TBA_   |
 
 ## App usage
 
