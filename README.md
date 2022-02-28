@@ -15,7 +15,9 @@ Looking at the container, one of my first thoughts was _"bananas don't have a co
 |  Month   | 🍌 eaten | fit 🥳 | split 😨 |
 | :------: | :------: | :----: | :------: |
 | January  | 9        | 3      |  6       |
-| February | _TBA_    | _TBA_  |  _TBA_   |
+| February | 17       | 2      |  15      |
+| March    | _TBA_    | _TBA_  |  _TBA_   |
+| Total    | 26       | 5      |  21      |
 
 ## App usage
 
