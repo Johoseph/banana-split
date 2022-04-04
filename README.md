@@ -16,8 +16,9 @@ Looking at the container, one of my first thoughts was _"bananas don't have a co
 | :------: | :------: | :----: | :------: |
 | January  | 9        | 3      |  6       |
 | February | 17       | 2      |  15      |
-| March    | _TBA_    | _TBA_  |  _TBA_   |
-| Total    | 26       | 5      |  21      |
+| March    | 30       | 9      |  21      |
+| April    | _TBA_    | _TBA_  |  _TBA_   |
+| Total    | 56       | 14     |  42      |
 
 ## App usage
 
